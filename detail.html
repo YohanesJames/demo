@@ -1,0 +1,764 @@
+﻿<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>能力详情 - Streamax</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root { --background: 168 26% 5%; --foreground: 0 0% 100%; --card: 170 20% 8%; --secondary: 165 18% 14%; --muted-foreground: 164 11% 70%; --border: 164 18% 25%; --ring: 174 76% 48%; --font-display: 'Inter', 'Microsoft YaHei', 'PingFang SC', 'Noto Sans CJK SC', sans-serif; --font-body: 'Inter', 'Microsoft YaHei', 'PingFang SC', 'Noto Sans CJK SC', sans-serif; }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { min-height: 100%; background: hsl(var(--background)); }
+    body { min-height: 100vh; overflow-x: hidden; font-family: var(--font-body); font-size: 16px; line-height: 1.65; color: hsl(var(--foreground)); background: linear-gradient(rgba(255,255,255,0.018) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.014) 1px, transparent 1px), radial-gradient(circle at 50% -10%, rgba(47, 228, 202, 0.22), transparent 34rem), radial-gradient(circle at 12% 20%, rgba(21, 128, 112, 0.18), transparent 28rem), linear-gradient(145deg, #030706 0%, #071411 36%, #10211d 62%, #050807 100%); background-size: 42px 42px, 42px 42px, auto, auto, auto; background-attachment: fixed; -webkit-font-smoothing: antialiased; text-rendering: geometricPrecision; }
+    h1, h2, h3, h4, h5 { font-family: var(--font-display); text-wrap: balance; font-feature-settings: "kern" 1; }
+    a { color: inherit; text-decoration: none; }
+    .shell { width: min(1120px, calc(100% - 40px)); margin: 0 auto; }
+    .nav-shell { position: sticky; top: 0; z-index: 10; margin-left: calc(50% - 50vw); margin-right: calc(50% - 50vw); background: linear-gradient(180deg, rgba(3, 7, 6, 0.9), rgba(7, 20, 17, 0.58)); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); border-bottom: 1px solid hsl(var(--border) / 0.24); }
+    .nav { width: 100%; display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 28px; padding: 16px clamp(24px, 5vw, 72px); }
+    .brand { display: flex; align-items: center; gap: 10px; font-weight: 700; }
+    .brand-logo { display: block; width: 167px; height: auto; object-fit: contain; }
+    .detail-nav-links { display: flex; align-items: center; justify-content: center; gap: 10px; font-size: 0.86rem; letter-spacing: 0.02em; }
+    .detail-nav-links a { color: hsl(var(--muted-foreground)); transition: color 0.2s ease; white-space: nowrap; }
+    .detail-nav-links a:hover { color: hsl(var(--foreground)); }
+    .detail-nav-links .dot { color: hsl(var(--muted-foreground)); opacity: 0.5; }
+    .back-link { display: inline-flex; align-items: center; gap: 8px; color: hsl(var(--muted-foreground)); font-size: 0.9rem; transition: color 0.2s; }
+    .back-link:hover { color: hsl(var(--foreground)); }
+    .hero { padding: 84px 0 48px; }
+    .eyebrow { color: hsl(var(--ring)); letter-spacing: 0.22em; text-transform: uppercase; font-size: 0.78rem; margin-bottom: 18px; }
+    h1 { font-size: clamp(3.4rem, 7vw, 6.4rem); line-height: 0.96; font-weight: 520; letter-spacing: -0.055em; margin-bottom: 24px; }
+    .lead { max-width: 780px; color: hsl(var(--muted-foreground)); font-size: clamp(1rem, 1.5vw, 1.14rem); line-height: 1.76; letter-spacing: 0.015em; }
+    .vehicle-live { display: none; margin: 0 0 34px; }
+    .vehicle-live.active { display: block; }
+    .live-grid { display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(320px, 0.85fr); gap: 22px; }
+    .live-map {
+      position: relative; min-height: 420px; overflow: hidden;
+      border: 1px solid hsl(var(--border) / 0.75); border-radius: 22px;
+      background:
+        radial-gradient(circle at 50% 48%, rgba(47, 228, 202, 0.18), transparent 15rem),
+        linear-gradient(rgba(255,255,255,0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.035) 1px, transparent 1px),
+        rgba(8, 22, 19, 0.78);
+      background-size: auto, 34px 34px, 34px 34px, auto;
+      box-shadow: inset 0 0 80px rgba(47, 228, 202, 0.08), 0 28px 80px rgba(0, 0, 0, 0.24);
+    }
+    .live-map::before {
+      content: ""; position: absolute; inset: 9%;
+      border: 1px solid rgba(47, 228, 202, 0.26); border-radius: 50%;
+      box-shadow: 0 0 0 48px rgba(47, 228, 202, 0.025), 0 0 0 96px rgba(47, 228, 202, 0.015);
+      animation: radarPulse 3.6s ease-in-out infinite;
+    }
+    .live-map::after {
+      content: ""; position: absolute; left: 50%; top: 50%; width: 45%; height: 2px;
+      transform-origin: left center; background: linear-gradient(90deg, rgba(47, 228, 202, 0.8), transparent);
+      animation: radarSweep 5.2s linear infinite;
+    }
+    .terminal-dot {
+      position: absolute; width: 8px; height: 8px; border-radius: 50%;
+      background: hsl(var(--ring)); box-shadow: 0 0 18px hsl(var(--ring));
+      animation: dotBlink 1.8s ease-in-out infinite;
+    }
+    .data-stream {
+      position: absolute; height: 1px; transform-origin: left center;
+      background: linear-gradient(90deg, transparent, rgba(47, 228, 202, 0.9), transparent);
+      animation: streamMove 2.6s linear infinite;
+      opacity: 0.75;
+    }
+    .map-title { position: absolute; left: 24px; top: 22px; z-index: 2; }
+    .map-title span { display: block; color: hsl(var(--ring)); font-size: 0.72rem; letter-spacing: 0.18em; text-transform: uppercase; margin-bottom: 8px; }
+    .map-title strong { display: block; font-size: 1.24rem; font-weight: 760; letter-spacing: -0.02em; }
+    .terminal-total { position: absolute; left: 24px; bottom: 24px; z-index: 2; }
+    .terminal-total strong { display: block; font-size: clamp(2.4rem, 5vw, 4.8rem); line-height: 0.95; letter-spacing: -0.04em; }
+    .terminal-total span { color: hsl(var(--muted-foreground)); font-size: 0.88rem; }
+    .live-side { display: grid; gap: 16px; }
+    .live-card {
+      border: 1px solid hsl(var(--border) / 0.75); border-radius: 18px; padding: 20px;
+      background: hsl(var(--card) / 0.76); backdrop-filter: blur(14px);
+    }
+    .live-card h3 { font-size: 1.08rem; font-weight: 760; letter-spacing: -0.015em; margin-bottom: 14px; }
+    .sensor-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
+    .sensor { border-radius: 14px; padding: 14px; background: hsl(var(--secondary) / 0.55); border: 1px solid hsl(var(--border) / 0.5); }
+    .sensor strong { display: block; font-size: 1.46rem; font-weight: 780; letter-spacing: -0.035em; margin-bottom: 5px; }
+    .sensor span { color: hsl(var(--muted-foreground)); font-size: 0.82rem; line-height: 1.45; }
+    .event-feed { display: grid; gap: 10px; max-height: 180px; overflow: hidden; }
+    .event-row { display: grid; grid-template-columns: 68px 1fr auto; gap: 10px; align-items: center; padding: 10px 0; border-bottom: 1px solid hsl(var(--border) / 0.35); font-size: 0.82rem; color: hsl(var(--muted-foreground)); }
+    .event-row strong { color: hsl(var(--foreground)); font-size: 0.86rem; font-weight: 720; }
+    .event-row em { font-style: normal; color: hsl(var(--ring)); }
+    .gpu-live { display: none; margin: 0 0 34px; }
+    .gpu-live.active { display: block; }
+    .gpu-dashboard { display: grid; grid-template-columns: minmax(0, 1.05fr) minmax(340px, 0.95fr); gap: 22px; }
+    .gpu-core {
+      position: relative; min-height: 430px; overflow: hidden; border-radius: 24px;
+      border: 1px solid rgba(47, 228, 202, 0.34);
+      background:
+        radial-gradient(circle at 50% 50%, rgba(47, 228, 202, 0.24), transparent 13rem),
+        radial-gradient(circle at 76% 22%, rgba(64, 128, 255, 0.16), transparent 15rem),
+        linear-gradient(135deg, rgba(7, 20, 17, 0.96), rgba(5, 11, 12, 0.82));
+      box-shadow: inset 0 0 120px rgba(47, 228, 202, 0.08), 0 34px 90px rgba(0, 0, 0, 0.34);
+    }
+    .gpu-chip {
+      position: absolute; left: 50%; top: 48%; width: 210px; height: 210px; transform: translate(-50%, -50%);
+      border-radius: 32px; border: 1px solid rgba(47, 228, 202, 0.64);
+      background: linear-gradient(145deg, rgba(47, 228, 202, 0.16), rgba(255, 255, 255, 0.035));
+      box-shadow: 0 0 70px rgba(47, 228, 202, 0.25), inset 0 0 36px rgba(47, 228, 202, 0.12);
+      display: grid; place-items: center; text-align: center;
+    }
+    .gpu-chip::before, .gpu-chip::after {
+      content: ""; position: absolute; inset: -42px; border: 1px dashed rgba(47, 228, 202, 0.22); border-radius: 42px;
+      animation: chipSpin 18s linear infinite;
+    }
+    .gpu-chip::after { inset: -76px; animation-duration: 28s; animation-direction: reverse; opacity: 0.55; }
+    .gpu-chip strong { display: block; font-size: clamp(3rem, 7vw, 5.4rem); line-height: 0.9; letter-spacing: -0.06em; }
+    .gpu-chip span { color: hsl(var(--muted-foreground)); font-size: 0.86rem; }
+    .gpu-line { position: absolute; height: 1px; width: 160px; background: linear-gradient(90deg, transparent, rgba(47, 228, 202, 0.9), transparent); animation: gpuLine 2.8s linear infinite; }
+    .gpu-line:nth-child(2) { left: 8%; top: 22%; transform: rotate(18deg); }
+    .gpu-line:nth-child(3) { right: 5%; top: 32%; transform: rotate(-22deg); animation-delay: 0.4s; }
+    .gpu-line:nth-child(4) { left: 14%; bottom: 24%; transform: rotate(-12deg); animation-delay: 0.8s; }
+    .gpu-line:nth-child(5) { right: 12%; bottom: 18%; transform: rotate(16deg); animation-delay: 1.2s; }
+    .gpu-hud { position: absolute; left: 24px; top: 22px; right: 24px; display: flex; justify-content: space-between; gap: 16px; z-index: 2; }
+    .gpu-hud span { color: hsl(var(--ring)); font-size: 0.72rem; letter-spacing: 0.18em; text-transform: uppercase; }
+    .gpu-hud strong { display: block; margin-top: 6px; font-size: 1rem; }
+    .gpu-cards { display: grid; gap: 16px; }
+    .gpu-stats { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; }
+    .gpu-stat, .gpu-panel {
+      border: 1px solid hsl(var(--border) / 0.75); border-radius: 18px; padding: 18px;
+      background: hsl(var(--card) / 0.76); backdrop-filter: blur(14px);
+    }
+    .gpu-stat strong { display: block; font-size: 1.86rem; font-weight: 780; letter-spacing: -0.04em; margin-bottom: 5px; }
+    .gpu-stat span { color: hsl(var(--muted-foreground)); font-size: 0.82rem; }
+    .gpu-panel h3 { font-size: 1.08rem; font-weight: 760; letter-spacing: -0.015em; margin-bottom: 14px; }
+    .bar-row { display: grid; gap: 8px; margin-bottom: 14px; }
+    .bar-row:last-child { margin-bottom: 0; }
+    .bar-meta { display: flex; justify-content: space-between; color: hsl(var(--muted-foreground)); font-size: 0.8rem; }
+    .bar-track { height: 8px; border-radius: 999px; background: hsl(var(--secondary) / 0.72); overflow: hidden; }
+    .bar-fill { height: 100%; border-radius: inherit; background: linear-gradient(90deg, hsl(var(--ring)), rgba(105, 160, 255, 0.95)); box-shadow: 0 0 18px rgba(47, 228, 202, 0.35); transition: width 0.45s ease; }
+    .job-row { display: grid; grid-template-columns: 1fr auto; gap: 10px; padding: 10px 0; border-bottom: 1px solid hsl(var(--border) / 0.35); font-size: 0.82rem; }
+    .job-row:last-child { border-bottom: 0; }
+    .job-row span { color: hsl(var(--muted-foreground)); }
+    .job-row em { color: hsl(var(--ring)); font-style: normal; }
+    .product-video { display: none; margin: 0 0 34px; }
+    .product-video.active { display: block; }
+    .video-stage {
+      border: 1px solid hsl(var(--border) / 0.78); border-radius: 24px; padding: 22px;
+      background:
+        radial-gradient(circle at 18% 0%, rgba(47, 228, 202, 0.16), transparent 28rem),
+        radial-gradient(circle at 82% 20%, rgba(68, 86, 255, 0.14), transparent 26rem),
+        hsl(var(--card) / 0.74);
+      box-shadow: 0 34px 100px rgba(0, 0, 0, 0.32), inset 0 1px 1px rgba(255, 255, 255, 0.04);
+      backdrop-filter: blur(14px);
+    }
+    .video-stage-head { display: flex; align-items: flex-end; justify-content: space-between; gap: 20px; margin-bottom: 18px; }
+    .video-stage-head span { display: block; color: hsl(var(--ring)); font-size: 0.72rem; letter-spacing: 0.18em; text-transform: uppercase; margin-bottom: 8px; }
+    .video-stage-head h2 { font-size: clamp(1.8rem, 4vw, 3.2rem); line-height: 1; font-weight: 760; letter-spacing: -0.05em; }
+    .video-stage-head p { max-width: 460px; color: hsl(var(--muted-foreground)); font-size: 0.94rem; line-height: 1.72; }
+    .video-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+    .video-card {
+      overflow: hidden; border-radius: 18px; border: 1px solid hsl(var(--border) / 0.62);
+      background: rgba(0, 0, 0, 0.28); position: relative;
+    }
+    .video-card video { width: 100%; aspect-ratio: 16 / 9; object-fit: cover; background: #000; }
+    .video-caption { display: flex; justify-content: space-between; gap: 12px; padding: 12px 14px 14px; font-size: 0.88rem; line-height: 1.45; }
+    .video-caption strong { color: hsl(var(--foreground)); }
+    .video-caption span { color: hsl(var(--muted-foreground)); }
+    .video-card.unsupported { min-height: 220px; display: grid; align-content: space-between; }
+    .video-placeholder {
+      display: grid; place-items: center; min-height: 170px; padding: 24px; text-align: center;
+      color: hsl(var(--muted-foreground));
+      background:
+        linear-gradient(135deg, rgba(47, 228, 202, 0.08), transparent),
+        hsl(var(--secondary) / 0.42);
+    }
+    .video-placeholder strong { color: hsl(var(--foreground)); display: block; margin-bottom: 8px; }
+    .video-empty {
+      border: 1px dashed hsl(var(--border)); border-radius: 18px; padding: 42px 24px; text-align: center;
+      color: hsl(var(--muted-foreground)); background: hsl(var(--secondary) / 0.42);
+    }
+    @keyframes radarSweep { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+    @keyframes radarPulse { 0%, 100% { opacity: 0.55; transform: scale(0.96); } 50% { opacity: 1; transform: scale(1.02); } }
+    @keyframes dotBlink { 0%, 100% { opacity: 0.35; transform: scale(0.7); } 50% { opacity: 1; transform: scale(1.35); } }
+    @keyframes streamMove { from { transform: translateX(-10px) scaleX(0.4); opacity: 0; } 35% { opacity: 0.9; } to { transform: translateX(46px) scaleX(1); opacity: 0; } }
+    @keyframes chipSpin { to { transform: rotate(360deg); } }
+    @keyframes gpuLine { 0% { opacity: 0; filter: blur(2px); } 35% { opacity: 1; filter: blur(0); } 100% { opacity: 0; transform: translateX(42px); } }
+    .algorithm-catalog { display: none; margin-top: 24px; padding: 28px; border: 1px solid hsl(var(--border) / 0.8); border-radius: 18px; background: hsl(var(--card) / 0.72); box-shadow: 0 24px 70px rgba(0, 0, 0, 0.22); backdrop-filter: blur(14px); }
+    .algorithm-catalog.active { display: block; }
+    .catalog-head { display: flex; align-items: flex-end; justify-content: space-between; gap: 24px; margin-bottom: 28px; }
+    .catalog-kicker { display: block; margin-bottom: 10px; color: hsl(var(--ring)); font-size: 0.72rem; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase; }
+    .catalog-head h2 { white-space: nowrap; text-wrap: nowrap; font-size: clamp(1.8rem, 4vw, 3rem); line-height: 1; font-weight: 760; letter-spacing: -0.05em; }
+    .algorithm-groups { display: grid; gap: 18px; }
+    .algorithm-group { padding: 22px; border: 1px solid hsl(var(--border) / 0.65); border-radius: 14px; background: hsl(var(--background) / 0.28); }
+    .algorithm-group-head { display: flex; justify-content: space-between; gap: 20px; align-items: flex-start; margin-bottom: 18px; }
+    .algorithm-group-head h3 { margin-bottom: 6px; font-size: 1.08rem; font-weight: 760; letter-spacing: -0.02em; }
+    .algorithm-group-head p { color: hsl(var(--muted-foreground)); font-size: 0.8rem; line-height: 1.55; }
+    .algorithm-count { flex: 0 0 auto; padding: 6px 9px; border: 1px solid hsl(var(--border)); border-radius: 999px; color: hsl(var(--muted-foreground)); font-size: 0.7rem; }
+    .algorithm-card-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 12px; }
+    .algorithm-card { display: flex; min-height: 210px; flex-direction: column; padding: 18px; border: 1px solid hsl(var(--border) / 0.7); border-radius: 12px; background: hsl(var(--secondary) / 0.48); transition: transform 0.2s ease, border-color 0.2s ease, background-color 0.2s ease; }
+    .algorithm-card:hover, .algorithm-card:focus-visible { transform: translateY(-4px); border-color: hsl(var(--ring) / 0.65); background: hsl(var(--secondary) / 0.76); outline: none; }
+    .algorithm-card-icon { display: grid; width: 46px; height: 46px; place-items: center; margin-bottom: 20px; border: 1px solid hsl(var(--border)); border-radius: 12px; background: hsl(var(--background) / 0.64); color: hsl(var(--ring)); }
+    .algorithm-card-icon svg { width: 25px; height: 25px; }
+    .algorithm-card h4 { margin-bottom: 8px; font-size: 0.98rem; font-weight: 760; letter-spacing: -0.015em; }
+    .algorithm-card p { color: hsl(var(--muted-foreground)); font-size: 0.78rem; line-height: 1.58; }
+    .algorithm-card-link { margin-top: auto; padding-top: 18px; color: hsl(var(--ring)); font-size: 0.72rem; font-weight: 700; letter-spacing: 0.04em; }
+    .catalog-more { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; gap: 16px; align-items: center; margin-top: 18px; padding: 18px 20px; border: 1px solid hsl(var(--border) / 0.75); border-radius: 14px; background: linear-gradient(90deg, hsl(var(--secondary) / 0.65), hsl(var(--secondary) / 0.38)); }
+    .catalog-more-icon { display: grid; width: 44px; height: 44px; place-items: center; border: 1px solid hsl(var(--border)); border-radius: 12px; color: hsl(var(--ring)); background: hsl(var(--background) / 0.6); }
+    .catalog-more-icon svg { width: 24px; height: 24px; }
+    .catalog-more strong { display: block; margin-bottom: 5px; font-size: 0.92rem; }
+    .catalog-more-badge { padding: 8px 11px; border: 1px solid hsl(var(--border)); border-radius: 999px; color: hsl(var(--ring)); font-size: 0.72rem; font-weight: 700; white-space: nowrap; }
+    .content { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(300px, 0.9fr); gap: 28px; padding: 24px 0 88px; }
+    .panel { background: hsl(var(--card) / 0.72); border: 1px solid hsl(var(--border) / 0.8); border-radius: 14px; padding: 28px; backdrop-filter: blur(14px); box-shadow: 0 24px 70px rgba(0, 0, 0, 0.22); }
+    .panel h2 { font-size: 1.18rem; font-weight: 760; margin-bottom: 20px; letter-spacing: -0.02em; }
+    .flow-list, .metric-list, .scenario-list { display: grid; gap: 14px; }
+    .flow-item, .metric-item, .scenario-item { border: 1px solid hsl(var(--border) / 0.7); background: hsl(var(--secondary) / 0.55); border-radius: 10px; padding: 16px 18px; }
+    .flow-item strong, .metric-item strong, .scenario-item strong { display: block; font-size: 1rem; font-weight: 740; letter-spacing: -0.01em; margin-bottom: 7px; }
+    .flow-item span, .metric-item span, .scenario-item span { display: block; color: hsl(var(--muted-foreground)); font-size: 0.88rem; line-height: 1.66; }
+    .primary-column, .aside { display: grid; gap: 18px; align-content: start; }
+    .compliance-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+    .compliance-item { display: grid; min-height: 72px; place-items: center; padding: 16px; border: 1px solid hsl(var(--border) / 0.7); border-radius: 10px; background: hsl(var(--secondary) / 0.55); color: hsl(var(--foreground)); text-align: center; font: inherit; }
+    .compliance-item strong { font-size: 1rem; font-weight: 760; letter-spacing: 0.02em; }
+    button.compliance-item { width: 100%; grid-template-columns: minmax(0, 1fr) auto; place-items: center stretch; gap: 12px; text-align: left; cursor: pointer; transition: transform 0.2s ease, border-color 0.2s ease, background-color 0.2s ease; }
+    button.compliance-item:hover, button.compliance-item:focus-visible { transform: translateY(-3px); border-color: hsl(var(--ring) / 0.68); background: hsl(var(--secondary) / 0.78); outline: none; }
+    .compliance-item-copy { display: grid; gap: 3px; }
+    .compliance-item-copy small { color: hsl(var(--muted-foreground)); font-size: 0.7rem; }
+    .compliance-item-action { display: grid; width: 34px; height: 34px; place-items: center; border: 1px solid hsl(var(--border)); border-radius: 9px; background: hsl(var(--background) / 0.58); color: hsl(var(--ring)); }
+    .compliance-item-action svg { width: 16px; height: 16px; }
+    .regulation-modal { position: fixed; inset: 0; z-index: 700; display: grid; place-items: center; padding: 24px; }
+    .regulation-modal[hidden], .regulation-gallery[hidden], .regulation-video-empty[hidden] { display: none; }
+    .regulation-modal-backdrop { position: absolute; inset: 0; background: rgba(0, 4, 2, 0.42); backdrop-filter: blur(9px) brightness(0.68); -webkit-backdrop-filter: blur(9px) brightness(0.68); animation: regulationBackdropIn 0.22s ease-out both; }
+    .regulation-dialog { position: relative; isolation: isolate; width: min(1120px, 92vw); max-height: calc(100vh - 48px); overflow-y: auto; padding: clamp(22px, 3.2vw, 36px); border: 1px solid hsl(var(--border) / 0.92); border-radius: 20px; background: radial-gradient(circle at 18% 0%, rgba(178, 224, 0, 0.08), transparent 24rem), linear-gradient(180deg, rgba(6, 14, 10, 0.985), rgba(1, 5, 3, 0.985)); box-shadow: 0 38px 120px rgba(0, 0, 0, 0.72), 0 0 46px rgba(178, 224, 0, 0.07); outline: none; animation: regulationDialogIn 0.3s cubic-bezier(0.2, 0.82, 0.26, 1) both; }
+    .regulation-dialog::before { content: ''; position: absolute; inset: 0; z-index: 0; pointer-events: none; background: radial-gradient(circle, rgba(185, 235, 0, 0.7) 0 1px, transparent 1.8px) 7% 8% / 170px 130px, radial-gradient(circle, rgba(255, 255, 230, 0.64) 0 0.9px, transparent 1.6px) 11% 19% / 260px 210px, radial-gradient(circle, rgba(166, 218, 0, 0.48) 0 1.3px, transparent 2.2px) 43% 17% / 310px 240px; opacity: 0.42; }
+    .regulation-dialog > * { position: relative; z-index: 1; }
+    .regulation-dialog-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 24px; margin-bottom: 24px; }
+    .regulation-dialog-kicker { display: block; margin-bottom: 7px; color: hsl(var(--ring)); font-size: 0.7rem; font-weight: 700; letter-spacing: 0.16em; text-transform: uppercase; }
+    .regulation-dialog h2 { margin-bottom: 7px; font-size: clamp(1.7rem, 4vw, 2.55rem); line-height: 1; letter-spacing: -0.04em; }
+    .regulation-dialog-head p { color: hsl(var(--muted-foreground)); font-size: 0.86rem; }
+    .regulation-close { display: grid; flex: 0 0 auto; width: 40px; height: 40px; place-items: center; border: 1px solid hsl(var(--border)); border-radius: 10px; background: hsl(var(--secondary) / 0.72); color: hsl(var(--foreground)); cursor: pointer; }
+    .regulation-close:hover, .regulation-close:focus-visible { border-color: hsl(var(--ring) / 0.65); outline: none; }
+    .regulation-close svg { width: 18px; height: 18px; }
+    .regulation-gallery { display: grid; grid-template-columns: minmax(0, 1.55fr) minmax(270px, 0.72fr); gap: 18px; align-items: start; }
+    .regulation-player-shell { overflow: hidden; border: 1px solid hsl(var(--border) / 0.82); border-radius: 14px; background: #000; }
+    .regulation-player { display: block; width: 100%; aspect-ratio: 16 / 9; background: #000; object-fit: contain; }
+    .regulation-player-caption { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 14px 16px; background: hsl(var(--secondary) / 0.62); }
+    .regulation-player-caption strong { font-size: 0.88rem; }
+    .regulation-player-caption span { flex: 0 0 auto; color: hsl(var(--muted-foreground)); font-size: 0.7rem; }
+    .regulation-playlist { padding: 14px; border: 1px solid hsl(var(--border) / 0.75); border-radius: 14px; background: hsl(var(--secondary) / 0.44); }
+    .regulation-playlist-head { display: flex; justify-content: space-between; gap: 12px; margin-bottom: 11px; color: hsl(var(--muted-foreground)); font-size: 0.72rem; }
+    .regulation-video-list { display: grid; gap: 8px; max-height: 440px; overflow-y: auto; padding-right: 3px; }
+    .regulation-video-option { display: grid; width: 100%; grid-template-columns: 34px minmax(0, 1fr); gap: 11px; align-items: center; padding: 10px; border: 1px solid transparent; border-radius: 10px; background: hsl(var(--background) / 0.38); color: hsl(var(--foreground)); text-align: left; font: inherit; cursor: pointer; transition: border-color 0.18s ease, background-color 0.18s ease, transform 0.18s ease; }
+    .regulation-video-option:hover, .regulation-video-option:focus-visible { transform: translateX(2px); border-color: hsl(var(--border)); background: hsl(var(--secondary) / 0.75); outline: none; }
+    .regulation-video-option.active { border-color: hsl(var(--ring) / 0.6); background: hsl(var(--ring) / 0.1); }
+    .regulation-video-index { display: grid; width: 34px; height: 34px; place-items: center; border-radius: 8px; background: hsl(var(--background) / 0.72); color: hsl(var(--ring)); font-size: 0.68rem; font-weight: 700; }
+    .regulation-video-option strong { overflow: hidden; font-size: 0.76rem; line-height: 1.4; text-overflow: ellipsis; }
+    .regulation-video-empty { display: grid; min-height: 280px; place-items: center; padding: 32px; border: 1px solid hsl(var(--border) / 0.75); border-radius: 14px; background: hsl(var(--secondary) / 0.45); color: hsl(var(--muted-foreground)); text-align: center; }
+    body.regulation-modal-open { overflow: hidden; }
+    @keyframes regulationBackdropIn { from { opacity: 0; } to { opacity: 1; } }
+    @keyframes regulationDialogIn { from { opacity: 0; transform: translateY(16px) scale(0.97); } to { opacity: 1; transform: translateY(0) scale(1); } }
+    .tag-row { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 18px; }
+    .tag { padding: 7px 11px; border-radius: 999px; border: 1px solid hsl(var(--border)); background: hsl(var(--secondary) / 0.7); color: hsl(var(--muted-foreground)); font-size: 0.78rem; letter-spacing: 0.02em; }
+    .cta { display: inline-flex; align-items: center; gap: 8px; margin-top: 22px; padding: 12px 16px; border-radius: 10px; background: hsl(var(--foreground)); color: hsl(var(--background)); font-weight: 700; font-size: 0.9rem; }
+    @media (max-width: 1380px) { .detail-nav-links { display: none; } .nav { grid-template-columns: 1fr auto; gap: 16px; } }
+    @media (max-width: 900px) { .nav { padding-right: 24px; } }
+    @media (max-width: 860px) { .shell { width: min(100% - 28px, 680px); } .nav { padding: 14px 24px; } .brand-logo { width: 132px; } .hero { padding: 58px 0 34px; } .live-grid, .gpu-dashboard, .video-grid { grid-template-columns: 1fr; } .video-stage-head { align-items: flex-start; flex-direction: column; } .live-map, .gpu-core { min-height: 360px; } .gpu-stats { grid-template-columns: 1fr; } .algorithm-catalog { padding: 22px; } .catalog-more { grid-template-columns: auto 1fr; } .catalog-more-badge { grid-column: 2; justify-self: start; } .regulation-modal { padding: 14px; } .regulation-dialog { width: 100%; max-height: calc(100vh - 28px); padding: 20px; } .regulation-gallery { grid-template-columns: 1fr; } .regulation-video-list { max-height: 250px; } .content { grid-template-columns: 1fr; padding-bottom: 60px; } .panel { padding: 22px; } }
+    @media (max-width: 480px) { .nav { padding-right: 18px; } .brand-logo { width: 112px; } .back-link { font-size: 0; } .back-link::before { content: "←"; font-size: 1.1rem; } h1 { font-size: clamp(2.7rem, 14vw, 4rem); } .catalog-head h2 { font-size: clamp(1rem, 5.2vw, 1.35rem); letter-spacing: -0.025em; } .catalog-more { grid-template-columns: 1fr; } .catalog-more-badge { grid-column: 1; } }
+  </style>
+  <link rel="stylesheet" href="detail-background.css?v=20260702-3">
+</head>
+<body>
+  <div class="shell">
+    <div class="nav-shell">
+      <nav class="nav">
+        <a class="brand" href="dididi.html#flywheel"><img class="brand-logo" src="assets/streamax-logo.png" alt="Streamax"></a>
+        <div class="detail-nav-links" aria-label="主导航">
+          <a href="dididi.html#home-gate" data-en-label="Home">首页</a><span class="dot">·</span>
+          <a href="dididi.html#flywheel" data-en-label="AI R&amp;D">AI研发能力全景</a><span class="dot">·</span>
+          <a href="dididi.html#kpi" data-en-label="Compute">算力底座</a><span class="dot">·</span>
+          <a href="dididi.html#mod1-data" data-en-label="Data">数据基础</a><span class="dot">·</span>
+          <a href="dididi.html#mod1-algo" data-en-label="Algorithms">算法能力</a><span class="dot">·</span>
+          <a href="dididi.html#mod2" data-en-label="Workflow">研发流程</a><span class="dot">·</span>
+          <a href="dididi.html#mod3" data-en-label="Large Model">大模型能力</a><span class="dot">·</span>
+          <a href="dididi.html#mod4" data-en-label="Applications">业务落地</a>
+        </div>
+        <a class="back-link" href="dididi.html" data-return-home>← 返回上一层</a>
+      </nav>
+    </div>
+    <header class="hero"><div class="eyebrow" id="category">Capability</div><h1 id="title">能力详情</h1><p class="lead" id="summary"></p></header>
+    <section class="vehicle-live" id="vehicleLive" aria-label="千万级车载终端实时回传数据">
+      <div class="live-grid">
+        <div class="live-map" id="liveMap">
+          <div class="map-title"><span>Live Vehicle Data Mesh</span><strong>千万级车载终端实时回传</strong></div>
+          <div class="terminal-total"><strong id="terminalTotal">10,482,736</strong><span>台终端在线采集 · 事件片段持续入湖</span></div>
+        </div>
+        <div class="live-side">
+          <section class="live-card">
+            <h3>实时数据吞吐</h3>
+            <div class="sensor-grid">
+              <div class="sensor"><strong id="eventRate">86,240</strong><span>条事件 / 分钟</span></div>
+              <div class="sensor"><strong id="uploadRate">3.8TB</strong><span>有效片段 / 小时</span></div>
+              <div class="sensor"><strong>98.7%</strong><span>数据质检通过率</span></div>
+              <div class="sensor"><strong>24h</strong><span>全天候回传监控</span></div>
+            </div>
+          </section>
+          <section class="live-card">
+            <h3>最新回传事件</h3>
+            <div class="event-feed" id="eventFeed"></div>
+          </section>
+        </div>
+      </div>
+    </section>
+    <section class="gpu-live" id="gpuLive" aria-label="高性能 GPU 卡算力总览">
+      <div class="gpu-dashboard">
+        <div class="gpu-core">
+          <div class="gpu-hud"><div><span>Compute Core</span><strong>训练 / 生成 / 标注一体化算力池</strong></div><div><span>Status</span><strong id="gpuClusterStatus">Healthy</strong></div></div>
+          <span class="gpu-line"></span><span class="gpu-line"></span><span class="gpu-line"></span><span class="gpu-line"></span>
+          <div class="gpu-chip"><div><strong id="gpuTotal">128</strong><span>高性能 GPU 卡在线纳管</span></div></div>
+        </div>
+        <div class="gpu-cards">
+          <div class="gpu-stats">
+            <div class="gpu-stat"><strong id="gpuUsage">76%</strong><span>集群综合利用率</span></div>
+            <div class="gpu-stat"><strong id="gpuMemory">82%</strong><span>显存使用水位</span></div>
+            <div class="gpu-stat"><strong id="gpuTemp">64°C</strong><span>平均核心温度</span></div>
+            <div class="gpu-stat"><strong id="gpuQueue">18</strong><span>训练任务排队</span></div>
+          </div>
+          <section class="gpu-panel">
+            <h3>资源使用状态</h3>
+            <div class="bar-row"><div class="bar-meta"><span>模型训练池</span><strong id="trainPct">84%</strong></div><div class="bar-track"><div class="bar-fill" id="trainBar" style="width:84%"></div></div></div>
+            <div class="bar-row"><div class="bar-meta"><span>样本生成</span><strong id="aigcPct">68%</strong></div><div class="bar-track"><div class="bar-fill" id="aigcBar" style="width:68%"></div></div></div>
+            <div class="bar-row"><div class="bar-meta"><span>自动标注推理</span><strong id="labelPct">57%</strong></div><div class="bar-track"><div class="bar-fill" id="labelBar" style="width:57%"></div></div></div>
+          </section>
+          <section class="gpu-panel">
+            <h3>正在运行的任务</h3>
+            <div id="gpuJobs"></div>
+          </section>
+        </div>
+      </div>
+    </section>
+    <section class="product-video" id="productVideo" aria-label="业务落地运营成果视频">
+      <div class="video-stage">
+        <div class="video-stage-head">
+          <div><span>Operational Proof</span><h2 id="videoTitle">实车运营成果</h2></div>
+          <p id="videoSummary">进入页面后自动播放实际运营视频，用真实道路与场景证明产品能力。</p>
+        </div>
+        <div class="video-grid" id="videoGrid"></div>
+      </div>
+    </section>
+    <section class="algorithm-catalog" id="algorithmCatalog" aria-labelledby="algorithmCatalogTitle">
+      <div class="catalog-head">
+        <div><span class="catalog-kicker" id="algorithmCatalogKicker">算法目录</span><h2 id="algorithmCatalogTitle">车端算法功能</h2></div>
+      </div>
+      <div class="algorithm-groups" id="algorithmGroups"></div>
+      <div class="catalog-more">
+        <span class="catalog-more-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><path d="M17.5 14v7M14 17.5h7"/></svg></span>
+        <div><strong id="catalogMoreTitle">更多算法功能</strong></div>
+        <span class="catalog-more-badge" id="catalogMoreBadge">72+ 项能力</span>
+      </div>
+    </section>
+    <main class="content">
+      <div class="primary-column">
+        <section class="panel" id="compliancePanel" hidden><h2 id="complianceTitle">法规合规</h2><div class="compliance-grid" id="complianceList"></div></section>
+        <section class="panel"><h2>能力流程</h2><div class="flow-list" id="flow"></div><a class="cta" href="dididi.html" data-return-home>返回上一层</a></section>
+      </div>
+      <aside class="aside">
+        <section class="panel"><h2>关键指标</h2><div class="metric-list" id="metrics"></div></section>
+        <section class="panel"><h2>典型场景</h2><div class="scenario-list" id="scenarios"></div><div class="tag-row" id="tags"></div></section>
+      </aside>
+    </main>
+  </div>
+  <div class="regulation-modal" id="regulationVideoModal" hidden>
+    <div class="regulation-modal-backdrop" data-regulation-close></div>
+    <section class="regulation-dialog" role="dialog" aria-modal="true" aria-labelledby="regulationVideoTitle" tabindex="-1">
+      <header class="regulation-dialog-head">
+        <div>
+          <span class="regulation-dialog-kicker" id="regulationVideoKicker">法规测试视频</span>
+          <h2 id="regulationVideoTitle">R131-02</h2>
+          <p id="regulationVideoDescription">选择测试演示视频进行播放。</p>
+        </div>
+        <button class="regulation-close" type="button" data-regulation-close aria-label="关闭法规测试视频">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>
+        </button>
+      </header>
+      <div class="regulation-gallery" id="regulationVideoGallery">
+        <div class="regulation-player-shell">
+          <video class="regulation-player" id="regulationVideoPlayer" controls playsinline preload="metadata"></video>
+          <div class="regulation-player-caption">
+            <strong id="regulationCurrentVideoTitle">测试视频</strong>
+            <span id="regulationCurrentVideoIndex">01 / 06</span>
+          </div>
+        </div>
+        <aside class="regulation-playlist" aria-label="法规测试视频列表">
+          <div class="regulation-playlist-head"><span id="regulationPlaylistLabel">视频列表</span><span id="regulationVideoCount">6 个视频</span></div>
+          <div class="regulation-video-list" id="regulationVideoList"></div>
+        </aside>
+      </div>
+      <div class="regulation-video-empty" id="regulationVideoEmpty" hidden></div>
+    </section>
+  </div>
+  <script src="i18n.js?v=20260703-1"></script>
+  <script src="algorithm-data.js?v=20260703-9"></script>
+  <script src="compliance-videos.js?v=20260703-2"></script>
+  <script>
+    const LANG = window.StreamaxI18n.getLanguage();
+    const BASE_ZH = {
+      'l2-product': ['业务落地与价值', 'L2 舱驾一体化 AEB', '集成座舱监测与自动驾驶辅助的系统级解决方案，实现驾驶员状态感知与紧急制动联动，显著降低事故风险。', ['风险识别|融合驾驶员状态、前向道路和车辆运动状态识别高风险场景。', '舱驾联动|将 DMS 与 AEB、ADAS 联动，形成主动安全回路。', '量产验证|面向客户车型完成联调、标定、测试和交付。'], ['L2|舱驾一体化辅助驾驶', '毫秒级|风险识别与联动', '可量产|面向真实车型集成'], ['疲劳驾驶联动|识别驾驶员异常状态并触发辅助提醒。', '前向碰撞风险|结合车内外信号降低追尾与误触风险。'], ['AEB','DMS','舱驾融合','主动安全']],
+      'l4-product': ['业务落地与价值', 'L4 自动驾驶巴士', '面向园区、景区、BRT 等固定路线的 L4 级自动驾驶解决方案，已投入多城市运营，用真实视频展示运营成果。', ['路线感知|融合车辆、道路、信号灯和周边交通参与者信息。', '自动决策|支持红绿灯通行、变道、避障、站点停靠等运营动作。', '安全运营|持续沉淀实车视频、接管记录和运行数据。'], ['L4|固定路线自动驾驶', '多场景|园区、景区、BRT', '运营级|真实道路成果展示'], ['红灯停绿灯行|在真实路口完成交通信号响应。', '拨杆变道与失能控制|展示自动驾驶决策与安全冗余能力。'], ['L4 巴士','实车运营','自动驾驶','安全冗余']],
+      'gpu-cards': ['GPU 服务器算力', '高性能 GPU 卡', '自建 GPU 服务器集群统一承载模型训练、样本生成、自动标注和多模态检索推理，向客户展示稳定、可调度、可扩展的算力底座。', ['资源纳管|统一管理 GPU 卡、显存、温度、功耗和节点健康状态。', '任务调度|按训练、生成、标注和检索任务动态分配算力。', '状态监控|实时展示利用率、队列、故障与吞吐，支撑研发资源决策。'], ['128+|高性能 GPU 卡', '76%|集群综合利用率', '24h|全天候训练调度'], ['模型训练|支撑交通场景基础模型预训练与微调。', '样本生成与标注|承载样本补齐、自动标注和批量推理。'], ['GPU 集群','训练调度','显存监控','算力底座']],
+      'vehicle-ai-algorithm': ['算法能力', '车端算法库 72+', '覆盖车内安全、车外感知与交通事件识别的车端算法能力，可按车型、终端算力和业务场景组合交付。', ['算法选型|根据 DMS、ADAS、BSW 等业务需求选择算法组合。', '端侧适配|面向摄像头位置、芯片算力、帧率和功耗约束进行模型压缩与部署。', '场景验证|在真实道路、座舱和运营场景中完成效果评估与版本迭代。'], ['72+|车端算法能力', '多场景|车内、车外、交通事件', '端侧|低功耗实时推理'], ['驾驶安全|疲劳、分心、抽烟、打电话等驾驶员状态识别。', '道路感知|前向碰撞、盲区目标、车道与行人车辆检测。'], ['内部算法功能','外部算法功能','端侧 AI','行为分析']],
+      'safegpt': ['算法理念', 'safeGPT 人因大脑', '以“理解人、关注人、保护人”为核心，把驾驶员状态、道路环境和车辆行为统一到安全认知引擎中。', ['多源感知|融合人脸、姿态、视线、行为、道路与车辆状态等多维信号。', '风险理解|结合研发工具链理解风险上下文，区分偶发动作、持续风险和紧急事件。', '主动干预|输出预警、提醒、联动制动或运营策略建议，形成安全回路。'], ['人因|驾驶员状态理解', '融合|车内外多维信号', '回路|识别、预警、干预'], ['主动安全预警|识别疲劳、分心、遮挡等风险并触发提醒。', '舱驾联动|将座舱监测结果与 AEB、ADAS 等能力协同。'], ['人因安全','模型认知','风险预警','舱驾融合']],
+      'data-processing': ['研发交付流程', '数据处理', '将原始路采、运营回流与合作样本转化为可训练、可评测、可追溯的数据资产。', ['数据接入|统一接入视频、CAN、雷达、IMU 与业务元数据，建立样本索引。', '场景筛选|按天气、道路、行为、风险等级筛出高价值片段。', '质量治理|完成清洗、去重、标注校验与版本沉淀。'], ['千万级|设备数据接入', '分钟级|片段检索与分发', '回路|采集到训练全链路'], ['长尾样本挖掘|识别夜间、雨雾、遮挡等稀缺场景。', '训练集构建|面向不同算法任务生成可复用数据包。'], ['数据清洗','场景库','自动标注','版本治理']],
+      'model-training': ['研发交付流程', '模型训练', '面向感知、安全与多模态任务，提供从预训练到微调的弹性训练能力。', ['任务配置|定义数据集、模型结构、损失函数与评测口径。', '训练调度|按资源情况进行单卡、多卡和集群任务调度。', '模型归档|沉淀权重、日志、指标与可复现实验记录。'], ['千卡级|弹性训练资源','多模态|视频、图像、文本融合','可追溯|实验版本管理'], ['算法迭代|支撑 DMS、ADAS、BSD 等模型快速迭代。','垂直模型训练|面向交通场景训练专用基础模型。'], ['预训练','微调','实验管理','模型版本']],
+      'model-evaluation': ['研发交付流程', '模型评估', '以自动化评测体系持续衡量模型在真实交通场景中的稳定性、准确率和长尾表现。', ['评测集选择|按任务、场景和版本选择基准数据集。','自动评测|批量生成精度、召回、误报、漏报等指标。','问题回流|将失败样本回流到数据治理与训练环节。'], ['多维|精度、性能、稳定性指标','自动化|版本回归评测','长尾|难例定位与回流'], ['版本准入|判断模型是否满足上线门槛。','问题诊断|定位误检、漏检和场景偏差。'], ['评测集','回归测试','指标看板','难例回流']],
+      'software-integration': ['研发交付流程', '软件集成', '把算法能力封装为 SDK、服务或端侧模块，快速集成到车载终端和业务系统。', ['接口封装|沉淀标准化 SDK、API 与模型配置。','端侧适配|适配算力平台、摄像头链路与业务协议。','联调交付|完成性能验证、稳定性测试与上线准备。'], ['SDK|标准化算法封装','端侧|车载终端部署','低风险|灰度与回滚机制'], ['量产集成|接入真实车型与终端设备。','平台联动|与云端配置、运维系统形成回路。'], ['SDK','端侧部署','接口适配','量产交付']],
+      'auto-testing': ['研发交付流程', '自动化测试', '通过回归测试、性能验证和稳定性检查，保障算法版本可交付、可上线。', ['测试编排|定义版本、设备、场景与指标门槛。','自动执行|批量运行功能、性能和异常场景测试。','报告输出|生成测试报告并沉淀风险项。'], ['自动化|回归测试执行','稳定性|长时间运行验证','报告化|问题回路追踪'], ['上线前验证|确认版本质量与性能边界。','问题复现|快速复现客户现场异常。'], ['回归测试','性能验证','质量门禁','风险追踪']],
+      'deployment': ['研发交付流程', '部署上线', '通过 OTA、灰度发布和版本回滚机制，让算法能力平稳进入真实运营场景。', ['发布计划|定义版本范围、目标设备和灰度节奏。','OTA 下发|按策略完成端侧升级与状态监控。','运营观测|监测效果、异常与用户反馈。'], ['OTA|远程升级','灰度|分批发布','可回滚|上线风险控制'], ['车型升级|按车型、区域、客户分批发布。','风险控制|异常版本快速回退。'], ['OTA','灰度发布','版本管理','运营监控']],
+      'ops-feedback': ['研发交付流程', '运营反馈', '从真实运营数据中捕获问题、难例和新需求，驱动下一轮算法和产品迭代。', ['数据回流|采集线上告警、误报、漏报和用户反馈。','难例挖掘|自动发现高价值样本与高频问题。','迭代输入|回流到数据处理、训练与评估环节。'], ['回路|运营到研发回流','难例|持续挖掘','迭代|产品效果提升'], ['现场问题优化|针对客户场景持续修正模型表现。','新增场景发现|从运营数据中发现新风险模式。'], ['数据回流','难例挖掘','运营看板','持续迭代']],
+      'vehicle-data': ['数据基础', '车端采集数据', '来自千万级车载终端的真实行驶数据，覆盖复杂路况、天气和驾驶行为。', ['端侧采集|摄像头、雷达、IMU 与车辆状态同步采集。','实时回传|按策略回传关键片段与事件数据。','样本入库|清洗后进入场景库与训练数据池。'], ['千万级|车载终端','多传感器|视频、雷达、IMU','真实|运营道路场景'], ['极端天气|雨雾、夜间、强光等场景。','驾驶行为|疲劳、分心、遮挡等状态样本。'], ['车端数据','多传感器','真实场景','数据回传']],
+      'partner-data': ['数据基础', '合作接入数据', '与主机厂、Tier1 和运营平台协作接入量产样本，补齐业务场景与真实标注。', ['合作接入|对齐数据协议、标注规范与合规边界。','样本治理|完成脱敏、筛选、质检与任务归类。','联合评测|面向客户场景进行专项验证。'], ['主机厂|真实量产样本','Tier1|系统级联调数据','合规|数据治理流程'], ['车型适配|面向不同车型的差异化验证。','客户专项|围绕特定行业场景构建样本集。'], ['主机厂','Tier1','联合评测','标注样本']],
+      'industry-data': ['数据基础', '行业数据沉淀', '沉淀交通行业长期运营数据与场景知识，形成可复用的行业样本资产。', ['场景分类|按行业、道路、风险与设备类型组织数据。','知识沉淀|沉淀标注规范、评测经验与长尾样本。','复用输出|支持算法训练、产品验证和客户交付。'], ['8 大行业|业务场景覆盖','2000+|场景库沉淀','长期|交通行业积累'], ['出租车与网约车|高频城市道路与乘客行为场景。','货运与公交|复杂路线、长时间运营与安全监管场景。'], ['行业场景','场景库','交通数据','长期沉淀']],
+      'sample-generation': ['大模型能力', '样本生成', '按场景条件生成多场景训练样本，缓解长尾样本不足。', ['场景描述|输入目标天气、光照、道路与行为条件。','样本合成|生成多样化图像或片段，补齐稀缺场景。','质量筛选|过滤低质量样本并进入训练数据池。'], ['长尾|稀缺场景补齐','多条件|天气、光照、道路','可训练|进入模型迭代'], ['雨雾夜间|补齐低频极端天气样本。','危险行为|生成遮挡、分心等风险样本。'], ['样本生成','扩散模型','合成数据','长尾样本']],
+      'multimodal-search': ['大模型能力', '多模态检索', '通过以文搜图、以图搜图快速定位海量路采数据中的目标场景。', ['语义输入|输入文本、图片或组合条件。','向量检索|在样本库中进行跨模态相似度匹配。','片段定位|输出可标注、可评测、可训练的数据片段。'], ['秒级|目标场景定位','跨模态|文本与图像检索','海量|路采数据索引'], ['找长尾场景|快速搜索“雨天行人横穿”等样本。','找相似问题|用错误样本反查相似片段。'], ['以文搜图','以图搜图','向量检索','语义搜索']],
+      'sample-dedup': ['大模型能力', '样本去重', '基于特征嵌入和语义相似度识别冗余帧，提升训练数据的信息密度。', ['特征提取|为图片、视频片段和元数据生成统一特征。','相似聚类|发现重复、近重复和低价值样本。','数据精简|保留代表性样本并生成去重报告。'], ['语义级|相似样本识别','高密度|训练数据优化','可解释|去重依据留痕'], ['路采冗余清理|剔除连续重复帧。','训练集压缩|减少重复样本对训练的干扰。'], ['特征嵌入','语义去重','样本治理','数据压缩']],
+      'auto-labeling': ['大模型能力', '自动标注', '预标注结合人工审核微调，提升检测、分割和跟踪任务的标注效率。', ['预标注|模型自动生成框、掩码、轨迹和属性。','人工审核|标注人员修正边界、类别和时序一致性。','质量回收|将修正样本用于下一轮模型训练。'], ['数倍|标注效率提升','多任务|检测、分割、跟踪','可质检|人工审核回路'], ['交通目标|车辆、行人、骑行者与道路事件。','车内状态|驾驶员、乘员与行为状态。'], ['预标注','人工审核','检测','分割','跟踪']],
+      'foundation-model': ['大模型能力', '行业感知模型 检测/分割', '面向交通场景训练的行业感知模型，支撑感知算法的核心任务。', ['行业预训练|基于交通场景数据进行基础能力训练。','任务适配|面向检测、分割、实例分割等任务微调。','场景评估|在真实道路与车内场景中验证泛化能力。'], ['垂直领域|交通场景基础模型','多任务|检测、分割、感知','强泛化|复杂场景适配'], ['车外感知|交通参与者、车道与道路事件。','车内感知|驾驶员状态、乘员行为与安全风险。'], ['基础模型','目标检测','语义分割','实例分割']],
+      'rag-qa': ['大模型能力', '知识问答系统 RAG', '基于研发知识库的问答系统，帮助团队快速检索规范、文档和评测报告。', ['知识入库|接入标注规范、算法文档、测试报告和客户资料。','语义检索|根据问题召回相关内容片段。','答案生成|结合上下文生成可追溯的研发答案。'], ['RAG|知识增强问答','可追溯|答案引用来源','高效率|研发信息检索'], ['标注规范查询|快速确认类别、边界和质检规则。','问题排查|检索历史评测报告和解决方案。'], ['RAG','知识库','文档检索','研发助手']]
+    };
+    const BASE = LANG === 'en' ? window.StreamaxI18n.detailTopicsEn : BASE_ZH;
+    const topicId = new URLSearchParams(location.search).get('topic') || 'data-processing';
+    const topic = BASE[topicId] || BASE['data-processing'];
+    const render = (id, rows, cls) => document.getElementById(id).innerHTML = rows.map(row => { const [a,b] = row.split('|'); return `<div class="${cls}"><strong>${a}</strong><span>${b}</span></div>`; }).join('');
+    document.title = topic[1] + ' - Streamax';
+    document.getElementById('category').textContent = topic[0];
+    document.getElementById('title').textContent = topic[1];
+    document.getElementById('summary').textContent = topic[2];
+    render('flow', topic[3], 'flow-item'); render('metrics', topic[4], 'metric-item'); render('scenarios', topic[5], 'scenario-item');
+    document.getElementById('tags').innerHTML = topic[6].map(tag => `<span class="tag">${tag}</span>`).join('');
+    if (topicId === 'vehicle-ai-algorithm' && window.AlgorithmLibrary) {
+      const catalog = document.getElementById('algorithmCatalog');
+      const library = window.AlgorithmLibrary;
+      document.getElementById('algorithmCatalogKicker').textContent = LANG === 'en' ? 'Algorithm Catalog' : '算法目录';
+      document.getElementById('algorithmCatalogTitle').textContent = LANG === 'en' ? 'On-vehicle Algorithm Functions' : '车端算法功能';
+      document.getElementById('catalogMoreTitle').textContent = LANG === 'en' ? 'More Algorithm Functions Available' : '更多算法功能';
+      document.getElementById('catalogMoreBadge').textContent = LANG === 'en' ? '72+ capabilities' : '72+ 项能力';
+      document.getElementById('algorithmGroups').innerHTML = library.groups.map(group => {
+        const items = Object.values(library.algorithms).filter(item => item.group === group.id);
+        const groupName = LANG === 'en' ? group.en : group.zh;
+        const groupDescription = LANG === 'en' ? group.descriptionEn : group.descriptionZh;
+        const countLabel = LANG === 'en' ? `${items.length} functions` : `${items.length} 项功能`;
+        const cards = items.map(item => {
+          const name = LANG === 'en' ? item.en : item.zh;
+          const summary = LANG === 'en' ? item.summaryEn : item.summaryZh;
+          const linkLabel = LANG === 'en' ? 'View function →' : '查看功能 →';
+          const href = `algorithm.html?id=${encodeURIComponent(item.id)}&lang=${LANG}`;
+          return `<a class="algorithm-card" href="${href}" aria-label="${name}"><span class="algorithm-card-icon">${library.iconSvg(item.icon)}</span><h4>${name}</h4><p>${summary}</p><span class="algorithm-card-link">${linkLabel}</span></a>`;
+        }).join('');
+        return `<section class="algorithm-group"><div class="algorithm-group-head"><div><h3>${groupName}</h3><p>${groupDescription}</p></div><span class="algorithm-count">${countLabel}</span></div><div class="algorithm-card-grid">${cards}</div></section>`;
+      }).join('');
+      catalog.classList.add('active');
+    }
+
+    function initRegulationVideoGallery() {
+      const library = window.ComplianceVideoLibrary || {};
+      const modal = document.getElementById('regulationVideoModal');
+      const dialog = modal.querySelector('.regulation-dialog');
+      const player = document.getElementById('regulationVideoPlayer');
+      const playerShell = modal.querySelector('.regulation-player-shell');
+      const list = document.getElementById('regulationVideoList');
+      const gallery = document.getElementById('regulationVideoGallery');
+      const empty = document.getElementById('regulationVideoEmpty');
+      const playlist = modal.querySelector('.regulation-playlist');
+      const title = document.getElementById('regulationVideoTitle');
+      const kicker = document.getElementById('regulationVideoKicker');
+      const description = document.getElementById('regulationVideoDescription');
+      const currentTitle = document.getElementById('regulationCurrentVideoTitle');
+      const currentIndex = document.getElementById('regulationCurrentVideoIndex');
+      const playlistLabel = document.getElementById('regulationPlaylistLabel');
+      const count = document.getElementById('regulationVideoCount');
+      const closeButton = modal.querySelector('.regulation-close');
+      let videos = [];
+      let activeIndex = 0;
+      let previousFocus = null;
+
+      const videoName = video => LANG === 'en' ? video.en : video.zh;
+      const countLabel = total => LANG === 'en' ? `${total} ${total === 1 ? 'video' : 'videos'}` : `${total} 个视频`;
+
+      function selectVideo(index, shouldPlay) {
+        if (!videos[index]) return;
+        activeIndex = index;
+        player.pause();
+        player.src = videos[index].src;
+        player.load();
+        currentTitle.textContent = videoName(videos[index]);
+        currentIndex.textContent = `${String(index + 1).padStart(2, '0')} / ${String(videos.length).padStart(2, '0')}`;
+        list.querySelectorAll('.regulation-video-option').forEach((button, buttonIndex) => {
+          const isActive = buttonIndex === index;
+          button.classList.toggle('active', isActive);
+          button.setAttribute('aria-current', isActive ? 'true' : 'false');
+        });
+        if (shouldPlay) player.play().catch(() => {});
+      }
+
+      function renderPlaylist() {
+        list.replaceChildren();
+        videos.forEach((video, index) => {
+          const button = document.createElement('button');
+          button.type = 'button';
+          button.className = 'regulation-video-option';
+          button.setAttribute('aria-label', `${LANG === 'en' ? 'Play' : '播放'} ${videoName(video)}`);
+          const number = document.createElement('span');
+          number.className = 'regulation-video-index';
+          number.textContent = String(index + 1).padStart(2, '0');
+          const label = document.createElement('strong');
+          label.textContent = videoName(video);
+          button.append(number, label);
+          button.addEventListener('click', () => selectVideo(index, true));
+          list.appendChild(button);
+        });
+      }
+
+      function openGallery(standard, opener) {
+        previousFocus = opener;
+        videos = Array.from(library[standard] || []);
+        title.textContent = standard;
+        kicker.textContent = LANG === 'en' ? 'Regulation Test Videos' : '法规测试视频';
+        description.textContent = LANG === 'en' ? 'Select a test demonstration video to play.' : '选择测试演示视频进行播放。';
+        playlistLabel.textContent = LANG === 'en' ? 'Video playlist' : '视频列表';
+        playlist.setAttribute('aria-label', LANG === 'en' ? 'Regulation test video playlist' : '法规测试视频列表');
+        count.textContent = countLabel(videos.length);
+        closeButton.setAttribute('aria-label', LANG === 'en' ? 'Close regulation test videos' : '关闭法规测试视频');
+        modal.hidden = false;
+        document.body.classList.add('regulation-modal-open');
+        if (videos.length) {
+          gallery.hidden = false;
+          empty.hidden = true;
+          playerShell.hidden = false;
+          renderPlaylist();
+          selectVideo(0, false);
+        } else {
+          gallery.hidden = true;
+          empty.hidden = false;
+          empty.textContent = LANG === 'en' ? `No videos have been added for ${standard} yet.` : `${standard} 尚未添加视频。`;
+        }
+        dialog.focus();
+      }
+
+      function closeGallery() {
+        player.pause();
+        player.removeAttribute('src');
+        player.load();
+        modal.hidden = true;
+        document.body.classList.remove('regulation-modal-open');
+        if (previousFocus && typeof previousFocus.focus === 'function') previousFocus.focus();
+      }
+
+      document.querySelectorAll('[data-regulation-video]').forEach(button => {
+        button.addEventListener('click', () => openGallery(button.dataset.regulationVideo, button));
+      });
+      modal.querySelectorAll('[data-regulation-close]').forEach(control => control.addEventListener('click', closeGallery));
+      document.addEventListener('keydown', event => {
+        if (event.key === 'Escape' && !modal.hidden) closeGallery();
+      });
+    }
+
+    if (topicId === 'l2-product') {
+      const compliancePanel = document.getElementById('compliancePanel');
+      const complianceStandards = ['R131-02', 'R152-02', 'TFL2.5', 'AIS-162'];
+      const complianceLibrary = window.ComplianceVideoLibrary || {};
+      document.getElementById('complianceTitle').textContent = LANG === 'en' ? 'Regulation Compliance' : '法规合规';
+      document.getElementById('complianceList').innerHTML = complianceStandards.map(standard => {
+        if (!Object.prototype.hasOwnProperty.call(complianceLibrary, standard)) return `<div class="compliance-item"><strong>${standard}</strong></div>`;
+        const total = complianceLibrary[standard].length;
+        const videoLabel = LANG === 'en' ? `${total} ${total === 1 ? 'video' : 'videos'}` : `${total} 个视频`;
+        const ariaLabel = LANG === 'en' ? `Open ${standard} test videos` : `打开 ${standard} 测试视频`;
+        return `<button class="compliance-item" type="button" data-regulation-video="${standard}" aria-label="${ariaLabel}"><span class="compliance-item-copy"><strong>${standard}</strong><small>${videoLabel}</small></span><span class="compliance-item-action" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M10 9l5 3-5 3V9z"/></svg></span></button>`;
+      }).join('');
+      compliancePanel.hidden = false;
+      initRegulationVideoGallery();
+    }
+    if (topicId === 'vehicle-data') {
+      const live = document.getElementById('vehicleLive');
+      const map = document.getElementById('liveMap');
+      const feed = document.getElementById('eventFeed');
+      live.classList.add('active');
+      const points = [
+        [18, 28], [28, 62], [36, 42], [44, 74], [52, 36], [60, 58], [68, 30], [76, 66],
+        [22, 48], [33, 78], [47, 52], [58, 24], [72, 46], [84, 54], [64, 76], [40, 22],
+        [16, 70], [88, 34], [54, 68], [30, 32], [70, 82], [82, 72]
+      ];
+      points.forEach(([left, top], index) => {
+        const dot = document.createElement('span');
+        dot.className = 'terminal-dot';
+        dot.style.left = left + '%';
+        dot.style.top = top + '%';
+        dot.style.animationDelay = (index * 0.16) + 's';
+        map.appendChild(dot);
+        if (index % 2 === 0) {
+          const stream = document.createElement('span');
+          stream.className = 'data-stream';
+          stream.style.left = left + '%';
+          stream.style.top = top + '%';
+          stream.style.width = (54 + (index % 5) * 18) + 'px';
+          stream.style.transform = `rotate(${(index * 31) % 360}deg)`;
+          stream.style.animationDelay = (index * 0.21) + 's';
+          map.appendChild(stream);
+        }
+      });
+      const events = LANG === 'en' ? [
+        ['Shenzhen', 'DMS fatigue-driving clip', 'Stored'],
+        ['Shanghai', 'Pedestrian crossing in rain at night', 'In quality review'],
+        ['Wuhan', 'BSD blind-spot target event', 'Uploaded'],
+        ['Chengdu', 'Hard braking and forward-collision alert', 'Ingested'],
+        ['Beijing', 'Occlusion and distracted-driving sample', 'Tagged'],
+        ['Hangzhou', 'Strong glare road clip', 'Stored']
+      ] : [
+        ['深圳', 'DMS 疲劳驾驶片段', '已入库'],
+        ['上海', '雨夜行人横穿样本', '质检中'],
+        ['武汉', 'BSD 盲区目标事件', '已回传'],
+        ['成都', '急刹与前车碰撞预警', '已入湖'],
+        ['北京', '遮挡与分心驾驶样本', '已标记'],
+        ['杭州', '强光逆光道路片段', '已入库']
+      ];
+      feed.innerHTML = events.map(([city, event, status]) => `<div class="event-row"><em>${city}</em><strong>${event}</strong><span>${status}</span></div>`).join('');
+      const total = document.getElementById('terminalTotal');
+      const eventRate = document.getElementById('eventRate');
+      const uploadRate = document.getElementById('uploadRate');
+      let tick = 0;
+      setInterval(() => {
+        tick += 1;
+        total.textContent = (10482736 + tick * 37).toLocaleString('en-US');
+        eventRate.textContent = (86240 + (tick % 9) * 137).toLocaleString('en-US');
+        uploadRate.textContent = (3.6 + (tick % 5) * 0.1).toFixed(1) + 'TB';
+        feed.prepend(feed.lastElementChild);
+      }, 1800);
+    }
+    if (topicId === 'gpu-cards') {
+      const gpuLive = document.getElementById('gpuLive');
+      gpuLive.classList.add('active');
+      const jobs = LANG === 'en' ? [
+        ['safeGPT-dms-v4.8', 'Training on 32 GPUs'],
+        ['sample-generation-rain-night-set', 'Generating on 16 GPUs'],
+        ['road-seg-foundation', 'Fine-tuning on 48 GPUs'],
+        ['auto-label-batch-0623', 'Inference on 24 GPUs']
+      ] : [
+        ['safeGPT-dms-v4.8', '32 卡训练中'],
+        ['样本生成-rain-night-set', '16 卡生成中'],
+        ['road-seg-foundation', '48 卡微调'],
+        ['auto-label-batch-0623', '24 卡推理']
+      ];
+      const jobBox = document.getElementById('gpuJobs');
+      jobBox.innerHTML = jobs.map(([name, state]) => `<div class="job-row"><span>${name}</span><em>${state}</em></div>`).join('');
+      const setText = (id, value) => { document.getElementById(id).textContent = value; };
+      const setBar = (name, value) => {
+        setText(name + 'Pct', value + '%');
+        document.getElementById(name + 'Bar').style.width = value + '%';
+      };
+      let gpuTick = 0;
+      setInterval(() => {
+        gpuTick += 1;
+        const usage = 74 + (gpuTick % 9);
+        const memory = 79 + (gpuTick % 7);
+        setText('gpuUsage', usage + '%');
+        setText('gpuMemory', memory + '%');
+        setText('gpuTemp', (62 + (gpuTick % 6)) + '°C');
+        setText('gpuQueue', 16 + (gpuTick % 8));
+        setBar('train', 80 + (gpuTick % 10));
+        setBar('aigc', 64 + (gpuTick % 12));
+        setBar('label', 54 + (gpuTick % 13));
+        jobBox.prepend(jobBox.lastElementChild);
+      }, 1700);
+    }
+    if (topicId === 'l4-product' || topicId === 'l2-product') {
+      const productVideo = document.getElementById('productVideo');
+      const videoGrid = document.getElementById('videoGrid');
+      const videoTitle = document.getElementById('videoTitle');
+      const videoSummary = document.getElementById('videoSummary');
+      productVideo.classList.add('active');
+      const videos = LANG === 'en'
+        ? (topicId === 'l4-product' ? [
+            ['L4 Autonomous Bus Operations', 'mp4/l4/web/l4-overview.mp4', 'Operations Overview', true],
+            ['Lever-controlled Lane Change', 'mp4/l4/web/lane-change.mp4', 'Autonomous Decision', true],
+            ['Traffic-light Response', 'mp4/l4/web/traffic-light.mp4', 'Signal Response', true],
+            ['Driver Incapacitation Control', 'mp4/l4/web/driver-incapacitation.mp4', 'Safety Redundancy', true]
+          ] : [
+            ['Forward Collision Mitigation Test', 'mp4/l2/converted/粤B41539D-前向碰撞缓解-20251008114615-4086366551429693489.mp4', 'AEB Coordination', true],
+            ['Forward Collision Mitigation', 'mp4/l2/converted/粤B74150D-前向碰撞缓解-20240704085150-2717440483277193223.mp4', 'AEB Coordination', true],
+            ['Right-side Collision Mitigation', 'mp4/l2/converted/粤B84643D-右侧碰撞缓解-20251009174558-4090074338714189845.mp4', 'Side Risk', true],
+            ['Rear Collision Mitigation', 'mp4/l2/converted/粤B97157D-后向碰撞缓解-20240630104236-2705794009439141895.mp4', 'Rear Risk', true]
+          ])
+        : (topicId === 'l4-product' ? [
+            ['L4 自动驾驶巴士实车运营', 'mp4/l4/web/l4-overview.mp4', '运营主片', true],
+            ['拨杆变道', 'mp4/l4/web/lane-change.mp4', '自动决策', true],
+            ['红灯停绿灯行', 'mp4/l4/web/traffic-light.mp4', '信号灯响应', true],
+            ['驾驶失能控制', 'mp4/l4/web/driver-incapacitation.mp4', '安全冗余', true]
+          ] : [
+            ['前向碰撞缓解实车验证', 'mp4/l2/converted/粤B41539D-前向碰撞缓解-20251008114615-4086366551429693489.mp4', 'AEB 联动', true],
+            ['前向碰撞缓解', 'mp4/l2/converted/粤B74150D-前向碰撞缓解-20240704085150-2717440483277193223.mp4', 'AEB 联动', true],
+            ['右侧碰撞缓解', 'mp4/l2/converted/粤B84643D-右侧碰撞缓解-20251009174558-4090074338714189845.mp4', '侧向风险', true],
+            ['后向碰撞缓解', 'mp4/l2/converted/粤B97157D-后向碰撞缓解-20240630104236-2705794009439141895.mp4', '后向风险', true]
+          ]);
+      videoTitle.textContent = LANG === 'en'
+        ? (topicId === 'l4-product' ? 'L4 Field Operation Videos' : 'L2 Field Operation Videos')
+        : (topicId === 'l4-product' ? 'L4 实车运营视频墙' : 'L2 运营视频展示');
+      videoSummary.textContent = LANG === 'en'
+        ? (topicId === 'l4-product'
+            ? 'Real-world operation videos demonstrate the L4 autonomous bus in real operating scenarios.'
+            : 'Muted auto-play videos of L2 cabin-driving integrated AEB real-vehicle validation demonstrate forward collision mitigation and other proactive safety capabilities.')
+        : (topicId === 'l4-product'
+            ? '所有片段进入页面后自动静音播放，集中展示 L4 自动驾驶巴士在真实运营场景中的能力。'
+            : '进入页面后自动静音播放 L2 舱驾一体化 AEB 实车验证视频，展示前向碰撞缓解等主动安全能力。');
+      if (videos.length) {
+        videoGrid.innerHTML = videos.map(([name, src, tag, playable]) => playable ? `
+          <article class="video-card">
+            <video src="${encodeURI(src)}" autoplay muted loop playsinline controls preload="auto"></video>
+            <div class="video-caption"><strong>${name}</strong><span>${tag}</span></div>
+          </article>
+        ` : `
+          <article class="video-card unsupported">
+            <div class="video-placeholder"><div><strong>${name}</strong><span>${LANG === 'en' ? 'Browsers cannot play AVI directly. Convert it to MP4 or WebM for autoplay.' : '浏览器不能直接播放 AVI 文件，请转码为 MP4/WebM 后可自动播放。'}</span></div></div>
+            <div class="video-caption"><strong>${src.split('/').pop()}</strong><span>${tag}</span></div>
+          </article>
+        `).join('');
+        Array.from(videoGrid.querySelectorAll('video')).forEach(video => {
+          video.addEventListener('error', () => {
+            const card = video.closest('.video-card');
+            if (card) {
+              card.classList.add('unsupported');
+              const errorCopy = LANG === 'en'
+                ? '<div class="video-placeholder"><div><strong>Video unavailable</strong><span>The file was found, but its codec may not be supported by this browser. Convert it to H.264 MP4.</span></div></div>'
+                : '<div class="video-placeholder"><div><strong>视频暂无法播放</strong><span>路径已找到，但当前浏览器可能不支持该视频编码。请转码为 H.264 MP4。</span></div></div>';
+              card.innerHTML = errorCopy + (card.querySelector('.video-caption') ? card.querySelector('.video-caption').outerHTML : '');
+            }
+          });
+          video.play().catch(() => {});
+        });
+      }
+    }
+    document.querySelectorAll('[data-return-home]').forEach(link => {
+      link.addEventListener('click', event => {
+        event.preventDefault();
+        const params = new URLSearchParams(location.search);
+        const returnHref = params.get('returnHref');
+        const returnY = params.get('returnY');
+        if (returnHref) {
+          try {
+            const target = new URL(returnHref, location.href);
+            if (returnY !== null) target.searchParams.set('restoreY', returnY);
+            location.href = target.pathname.split('/').pop() + target.search + target.hash;
+            return;
+          } catch (error) {}
+        }
+        const saved = sessionStorage.getItem('streamax:returnState');
+        if (saved) {
+          sessionStorage.setItem('streamax:restoreState', saved);
+          try {
+            const state = JSON.parse(saved);
+            location.href = state.href || 'dididi.html';
+            return;
+          } catch (error) {}
+        }
+        if (document.referrer && document.referrer.includes('dididi.html') && history.length > 1) {
+          history.back();
+          return;
+        }
+        location.href = 'dididi.html?lang=' + LANG;
+      });
+    });
+  </script>
+</body>
+</html>

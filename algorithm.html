@@ -1,0 +1,312 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>算法功能 - Streamax</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root { --background: 168 26% 5%; --foreground: 0 0% 100%; --card: 170 20% 8%; --secondary: 165 18% 14%; --muted-foreground: 164 11% 70%; --border: 164 18% 25%; --ring: 174 76% 48%; --font: 'Inter', 'Microsoft YaHei', 'PingFang SC', sans-serif; }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { min-height: 100%; background: hsl(var(--background)); }
+    body { min-height: 100vh; overflow-x: hidden; color: hsl(var(--foreground)); font-family: var(--font); background: linear-gradient(rgba(255,255,255,.018) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.014) 1px, transparent 1px), radial-gradient(circle at 50% -10%, rgba(47,228,202,.2), transparent 34rem), linear-gradient(145deg, #030706 0%, #071411 42%, #050807 100%); background-size: 42px 42px, 42px 42px, auto, auto; background-attachment: fixed; -webkit-font-smoothing: antialiased; }
+    a { color: inherit; text-decoration: none; }
+    h1, h2, h3 { text-wrap: balance; }
+    .shell { width: min(1120px, calc(100% - 40px)); margin: 0 auto; }
+    .nav-shell { position: sticky; top: 0; z-index: 20; margin-left: calc(50% - 50vw); margin-right: calc(50% - 50vw); border-bottom: 1px solid hsl(var(--border) / .25); background: rgba(3, 7, 6, .82); backdrop-filter: blur(14px); }
+    .nav { display: flex; align-items: center; justify-content: space-between; gap: 24px; padding: 16px clamp(24px, 5vw, 72px); }
+    .brand-logo { display: block; width: 167px; height: auto; }
+    .back-link { color: hsl(var(--muted-foreground)); font-size: .88rem; transition: color .2s ease; }
+    .back-link:hover, .back-link:focus-visible { color: hsl(var(--foreground)); }
+    .hero { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 28px; align-items: start; padding: 86px 0 46px; }
+    .hero-icon { display: grid; width: 92px; height: 92px; place-items: center; border: 1px solid hsl(var(--border)); border-radius: 24px; background: hsl(var(--card) / .78); color: hsl(var(--ring)); box-shadow: 0 24px 70px rgba(0,0,0,.28); }
+    .hero-icon svg { width: 46px; height: 46px; }
+    .eyebrow { margin-bottom: 14px; color: hsl(var(--ring)); font-size: .74rem; font-weight: 700; letter-spacing: .18em; text-transform: uppercase; }
+    h1 { margin-bottom: 18px; font-size: clamp(3rem, 7vw, 6.1rem); line-height: .96; font-weight: 560; letter-spacing: -.055em; }
+    h1.long-title { max-width: none; white-space: nowrap; font-size: clamp(2.15rem, 4.25vw, 4.2rem); line-height: 1.02; letter-spacing: -.045em; }
+    .lead { max-width: 780px; color: hsl(var(--muted-foreground)); font-size: clamp(1rem, 1.6vw, 1.16rem); line-height: 1.75; }
+    .status { display: inline-flex; margin-top: 22px; padding: 8px 11px; border: 1px solid hsl(var(--border)); border-radius: 999px; color: hsl(var(--muted-foreground)); background: hsl(var(--secondary) / .55); font-size: .72rem; letter-spacing: .04em; }
+    .content { padding: 12px 0 88px; }
+    .rich-detail[hidden], .generic-panel[hidden] { display: none; }
+    .rich-detail { display: grid; gap: 18px; }
+    .panel { padding: clamp(24px, 4vw, 36px); border: 1px solid hsl(var(--border) / .8); border-radius: 18px; background: hsl(var(--card) / .72); box-shadow: 0 24px 70px rgba(0,0,0,.22); backdrop-filter: blur(14px); }
+    .panel-head { display: grid; grid-template-columns: minmax(0, .75fr) minmax(280px, 1.25fr); gap: 28px; align-items: end; margin-bottom: 28px; }
+    .panel-head h2 { font-size: clamp(1.7rem, 4vw, 2.8rem); line-height: 1; letter-spacing: -.045em; }
+    .panel-head p { color: hsl(var(--muted-foreground)); font-size: .9rem; line-height: 1.7; }
+    .roadmap-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+    .roadmap-card { min-height: 150px; padding: 18px; border: 1px dashed hsl(var(--border)); border-radius: 12px; background: hsl(var(--secondary) / .38); }
+    .roadmap-card strong { display: block; margin-bottom: 26px; font-size: .94rem; }
+    .roadmap-card span { color: hsl(var(--muted-foreground)); font-size: .75rem; }
+    .algorithm-video-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 14px; }
+    .algorithm-video-grid.four-up { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .algorithm-video-card { overflow: hidden; border: 1px solid hsl(var(--border) / .76); border-radius: 13px; background: hsl(var(--secondary) / .45); }
+    .algorithm-video-card video { display: block; width: 100%; aspect-ratio: 16 / 9; background: #000; object-fit: cover; }
+    .algorithm-video-card figcaption { padding: 12px 14px; color: hsl(var(--foreground)); font-size: .78rem; font-weight: 600; }
+    .algorithm-video-placeholder { overflow: hidden; border: 1px dashed hsl(var(--border)); border-radius: 13px; background: hsl(var(--secondary) / .34); }
+    .placeholder-visual { display: grid; aspect-ratio: 16 / 9; place-items: center; background: radial-gradient(circle at 50% 50%, hsl(var(--ring) / .09), transparent 55%), hsl(var(--background) / .46); }
+    .placeholder-visual span { padding: 7px 10px; border: 1px solid hsl(var(--border)); border-radius: 7px; color: hsl(var(--ring)); font-size: .65rem; font-weight: 700; letter-spacing: .14em; }
+    .placeholder-copy { padding: 12px 14px; }
+    .placeholder-copy strong { display: block; margin-bottom: 3px; font-size: .78rem; }
+    .placeholder-copy small { color: hsl(var(--muted-foreground)); font-size: .68rem; }
+    .overview-grid { display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(300px, .85fr); gap: 26px; align-items: start; }
+    .overview-copy .eyebrow { margin-bottom: 10px; }
+    .overview-copy h2 { margin-bottom: 16px; font-size: clamp(1.8rem, 4vw, 3rem); line-height: 1; letter-spacing: -.045em; }
+    .overview-copy p { color: hsl(var(--muted-foreground)); font-size: .94rem; line-height: 1.78; }
+    .metric-grid { display: grid; gap: 10px; }
+    .metric-card { padding: 16px; border: 1px solid hsl(var(--border) / .72); border-radius: 12px; background: hsl(var(--secondary) / .46); }
+    .metric-card strong { display: block; margin-bottom: 5px; color: hsl(var(--foreground)); font-size: 1.02rem; letter-spacing: -.02em; }
+    .metric-card span { color: hsl(var(--muted-foreground)); font-size: .72rem; line-height: 1.45; }
+    .capability-title { margin-bottom: 20px; font-size: clamp(1.5rem, 3vw, 2.25rem); letter-spacing: -.035em; }
+    .capability-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+    .capability-grid.dense { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .capability-card { min-height: 170px; padding: 20px; border: 1px solid hsl(var(--border) / .72); border-radius: 13px; background: hsl(var(--secondary) / .42); }
+    .capability-number { display: block; margin-bottom: 28px; color: hsl(var(--ring)); font-size: .68rem; font-weight: 700; letter-spacing: .12em; }
+    .capability-card h3 { margin-bottom: 9px; font-size: .96rem; letter-spacing: -.015em; }
+    .capability-card p { color: hsl(var(--muted-foreground)); font-size: .78rem; line-height: 1.62; }
+    .algorithm-regulation-modal[hidden] { display: none; }
+    .metric-card-action { position: relative; width: 100%; padding-right: 58px; color: hsl(var(--foreground)); text-align: left; font: inherit; cursor: pointer; transition: transform .2s ease, border-color .2s ease, background-color .2s ease; }
+    .metric-card-action:hover, .metric-card-action:focus-visible { transform: translateX(3px); border-color: hsl(var(--ring) / .6); background: hsl(var(--ring) / .08); outline: none; }
+    .metric-card-action-icon { position: absolute; top: 50%; right: 16px; display: grid; width: 34px; height: 34px; place-items: center; border-radius: 9px; background: hsl(var(--background) / .68); color: hsl(var(--ring)); transform: translateY(-50%); }
+    .metric-card-action-icon svg { width: 18px; height: 18px; }
+    .algorithm-regulation-modal { position: fixed; inset: 0; z-index: 80; display: grid; place-items: center; padding: 24px; }
+    .algorithm-regulation-backdrop { position: absolute; inset: 0; background: rgba(0, 3, 2, .48); backdrop-filter: blur(10px) saturate(.95); animation: regulationBackdropIn .22s ease both; }
+    .algorithm-regulation-dialog { position: relative; width: min(1080px, 100%); max-height: calc(100vh - 48px); overflow-y: auto; padding: clamp(22px, 3.2vw, 36px); border: 1px solid hsl(var(--border) / .92); border-radius: 20px; background: radial-gradient(circle at 18% 0%, hsl(var(--ring) / .08), transparent 24rem), linear-gradient(180deg, rgba(6,14,10,.985), rgba(1,5,3,.985)); box-shadow: 0 38px 120px rgba(0,0,0,.72), 0 0 46px hsl(var(--ring) / .07); outline: none; animation: regulationDialogIn .3s cubic-bezier(.2,.82,.26,1) both; }
+    .algorithm-regulation-dialog::before { content: ''; position: absolute; inset: 0; z-index: 0; pointer-events: none; background: radial-gradient(circle, rgba(185,235,0,.7) 0 1px, transparent 1.8px) 7% 8% / 170px 130px, radial-gradient(circle, rgba(255,255,230,.64) 0 .9px, transparent 1.6px) 11% 19% / 260px 210px; opacity: .28; }
+    .algorithm-regulation-dialog > * { position: relative; z-index: 1; }
+    .algorithm-regulation-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 24px; margin-bottom: 24px; }
+    .algorithm-regulation-kicker { display: block; margin-bottom: 7px; color: hsl(var(--ring)); font-size: .7rem; font-weight: 700; letter-spacing: .16em; text-transform: uppercase; }
+    .algorithm-regulation-head h2 { margin-bottom: 7px; font-size: clamp(1.7rem, 4vw, 2.55rem); line-height: 1; letter-spacing: -.04em; }
+    .algorithm-regulation-close { display: grid; flex: 0 0 auto; width: 40px; height: 40px; place-items: center; border: 1px solid hsl(var(--border)); border-radius: 10px; background: hsl(var(--secondary) / .72); color: hsl(var(--foreground)); cursor: pointer; }
+    .algorithm-regulation-close:hover, .algorithm-regulation-close:focus-visible { border-color: hsl(var(--ring) / .65); outline: none; }
+    .algorithm-regulation-close svg { width: 18px; height: 18px; }
+    .algorithm-regulation-gallery { display: grid; grid-template-columns: minmax(0, 1.55fr) minmax(270px, .72fr); gap: 18px; align-items: start; }
+    .algorithm-regulation-player-shell { overflow: hidden; border: 1px solid hsl(var(--border) / .82); border-radius: 14px; background: #000; }
+    .algorithm-regulation-player { display: block; width: 100%; aspect-ratio: 16 / 9; background: #000; object-fit: contain; }
+    .algorithm-regulation-caption { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 14px 16px; background: hsl(var(--secondary) / .62); }
+    .algorithm-regulation-caption strong { font-size: .88rem; }
+    .algorithm-regulation-caption span { flex: 0 0 auto; color: hsl(var(--muted-foreground)); font-size: .7rem; }
+    .algorithm-regulation-playlist { padding: 14px; border: 1px solid hsl(var(--border) / .75); border-radius: 14px; background: hsl(var(--secondary) / .44); }
+    .algorithm-regulation-playlist-head { display: flex; justify-content: space-between; gap: 12px; margin-bottom: 11px; color: hsl(var(--muted-foreground)); font-size: .72rem; }
+    .algorithm-regulation-list { display: grid; gap: 8px; max-height: 440px; overflow-y: auto; padding-right: 3px; }
+    .algorithm-regulation-option { display: grid; width: 100%; grid-template-columns: 34px minmax(0,1fr); gap: 11px; align-items: center; padding: 10px; border: 1px solid transparent; border-radius: 10px; background: hsl(var(--background) / .38); color: hsl(var(--foreground)); text-align: left; font: inherit; cursor: pointer; transition: border-color .18s ease, background-color .18s ease, transform .18s ease; }
+    .algorithm-regulation-option:hover, .algorithm-regulation-option:focus-visible { transform: translateX(2px); border-color: hsl(var(--border)); background: hsl(var(--secondary) / .75); outline: none; }
+    .algorithm-regulation-option.active { border-color: hsl(var(--ring) / .6); background: hsl(var(--ring) / .1); }
+    .algorithm-regulation-index { display: grid; width: 34px; height: 34px; place-items: center; border-radius: 8px; background: hsl(var(--background) / .72); color: hsl(var(--ring)); font-size: .68rem; font-weight: 700; }
+    .algorithm-regulation-option strong { overflow: hidden; font-size: .76rem; line-height: 1.4; text-overflow: ellipsis; }
+    body.algorithm-regulation-open { overflow: hidden; }
+    @keyframes regulationBackdropIn { from { opacity: 0; } to { opacity: 1; } }
+    @keyframes regulationDialogIn { from { opacity: 0; transform: translateY(16px) scale(.97); } to { opacity: 1; transform: translateY(0) scale(1); } }
+    .cta { display: inline-flex; margin-top: 22px; padding: 12px 16px; border-radius: 10px; background: hsl(var(--foreground)); color: hsl(var(--background)); font-size: .86rem; font-weight: 700; }
+    .rich-detail > .cta { justify-self: start; width: auto; margin-top: 2px; padding: 9px 12px; font-size: .76rem; }
+    @media (max-width: 980px) { .capability-grid.dense { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+    @media (max-width: 760px) { .shell { width: min(100% - 28px, 680px); } .brand-logo { width: 132px; } .hero { grid-template-columns: 1fr; padding-top: 58px; } .hero-icon { width: 72px; height: 72px; border-radius: 18px; } .hero-icon svg { width: 36px; height: 36px; } h1.long-title { white-space: normal; font-size: clamp(2.15rem, 10vw, 3.35rem); } .panel-head, .roadmap-grid, .overview-grid, .capability-grid, .capability-grid.dense, .algorithm-regulation-gallery, .algorithm-video-grid.four-up { grid-template-columns: 1fr; } .algorithm-regulation-modal { padding: 14px; } .algorithm-regulation-dialog { max-height: calc(100vh - 28px); padding: 20px; } .algorithm-regulation-list { max-height: 250px; } .roadmap-card { min-height: 122px; } .capability-card { min-height: 148px; } }
+  </style>
+  <link rel="stylesheet" href="detail-background.css?v=20260702-3">
+</head>
+<body>
+  <div class="shell">
+    <div class="nav-shell">
+      <nav class="nav">
+        <a href="dididi.html#flywheel"><img class="brand-logo" src="assets/streamax-logo.png" alt="Streamax"></a>
+        <a class="back-link" id="libraryBack" href="detail.html?topic=vehicle-ai-algorithm">← 返回算法库</a>
+      </nav>
+    </div>
+    <header class="hero">
+      <div class="hero-icon" id="algorithmIcon"></div>
+      <div>
+        <div class="eyebrow" id="algorithmGroup">算法功能</div>
+        <h1 id="algorithmName">算法功能</h1>
+        <p class="lead" id="algorithmSummary"></p>
+        <span class="status" id="algorithmStatus">专属功能页面 · 内容框架已就绪</span>
+      </div>
+    </header>
+    <main class="content">
+      <div class="rich-detail" id="richDetail" hidden>
+        <section class="panel" id="mediaPanel">
+          <div class="panel-head"><h2 id="mediaTitle"></h2><p id="mediaSummary"></p></div>
+          <div class="algorithm-video-grid" id="algorithmVideoGrid"></div>
+        </section>
+        <section class="panel overview-grid">
+          <div class="overview-copy"><div class="eyebrow" id="overviewKicker"></div><h2 id="overviewTitle"></h2><p id="overviewText"></p></div>
+          <div class="metric-grid" id="algorithmMetricGrid"></div>
+        </section>
+        <section class="panel">
+          <h2 class="capability-title" id="capabilityTitle"></h2>
+          <div class="capability-grid" id="capabilityGrid"></div>
+        </section>
+        <a class="cta" id="richLibraryCta" href="detail.html?topic=vehicle-ai-algorithm">返回算法库</a>
+      </div>
+      <section class="panel generic-panel" id="genericPanel">
+        <div class="panel-head"><h2 id="structureTitle">页面内容框架</h2><p id="structureSummary">该页面已为后续功能说明、技术资料与演示内容预留结构。</p></div>
+        <div class="roadmap-grid" id="roadmapGrid"></div>
+        <a class="cta" id="libraryCta" href="detail.html?topic=vehicle-ai-algorithm">返回算法库</a>
+      </section>
+    </main>
+  </div>
+  <div class="algorithm-regulation-modal" id="algorithmRegulationModal" hidden>
+    <div class="algorithm-regulation-backdrop" data-algorithm-regulation-close></div>
+    <section class="algorithm-regulation-dialog" role="dialog" aria-modal="true" aria-labelledby="algorithmRegulationDialogTitle" tabindex="-1">
+      <header class="algorithm-regulation-head">
+        <div><span class="algorithm-regulation-kicker" id="algorithmRegulationKicker"></span><h2 id="algorithmRegulationDialogTitle"></h2></div>
+        <button class="algorithm-regulation-close" type="button" data-algorithm-regulation-close><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+      </header>
+      <div class="algorithm-regulation-gallery">
+        <div class="algorithm-regulation-player-shell"><video class="algorithm-regulation-player" id="algorithmRegulationPlayer" controls playsinline preload="metadata"></video><div class="algorithm-regulation-caption"><strong id="algorithmRegulationCurrentTitle"></strong><span id="algorithmRegulationCurrentIndex"></span></div></div>
+        <aside class="algorithm-regulation-playlist"><div class="algorithm-regulation-playlist-head"><span id="algorithmRegulationPlaylistLabel"></span><span id="algorithmRegulationPlaylistCount"></span></div><div class="algorithm-regulation-list" id="algorithmRegulationList"></div></aside>
+      </div>
+    </section>
+  </div>
+  <script src="i18n.js?v=20260703-1"></script>
+  <script src="algorithm-data.js?v=20260703-9"></script>
+  <script src="compliance-videos.js?v=20260703-2"></script>
+  <script>
+    const LANG = window.StreamaxI18n.getLanguage();
+    const library = window.AlgorithmLibrary;
+    const requestedId = new URLSearchParams(location.search).get('id') || 'dms';
+    const algorithm = library.algorithms[requestedId] || library.algorithms.dms;
+    const detail = library.details && library.details[algorithm.id];
+    const group = library.groups.find(item => item.id === algorithm.group) || library.groups[0];
+    const name = LANG === 'en' ? algorithm.en : algorithm.zh;
+    const pageName = detail && (LANG === 'en' ? detail.pageTitleEn : detail.pageTitleZh) || name;
+    const summary = LANG === 'en' ? algorithm.summaryEn : algorithm.summaryZh;
+    const groupName = LANG === 'en' ? group.en : group.zh;
+    const libraryHref = `detail.html?topic=vehicle-ai-algorithm&lang=${LANG}`;
+    const roadmap = LANG === 'en'
+      ? ['Inputs & Sensors', 'Detection Capabilities', 'Outputs & Events', 'Typical Scenarios', 'Edge Integration', 'Validation & Evidence']
+      : ['输入与传感器', '识别能力', '输出与事件', '典型场景', '端侧集成', '验证与依据'];
+    document.documentElement.lang = LANG === 'en' ? 'en' : 'zh-CN';
+    document.title = `${pageName} - Streamax`;
+    document.getElementById('algorithmIcon').innerHTML = library.iconSvg(algorithm.icon);
+    document.getElementById('algorithmGroup').textContent = groupName;
+    document.getElementById('algorithmName').textContent = pageName;
+    document.getElementById('algorithmName').classList.toggle('long-title', pageName.length > 14);
+    document.getElementById('algorithmSummary').textContent = summary;
+    document.getElementById('libraryBack').href = libraryHref;
+    document.getElementById('libraryBack').textContent = LANG === 'en' ? '← Algorithm Library' : '← 返回算法库';
+    document.getElementById('libraryCta').href = libraryHref;
+    document.getElementById('libraryCta').textContent = LANG === 'en' ? 'Back to Algorithm Library' : '返回算法库';
+    document.getElementById('richLibraryCta').href = libraryHref;
+    document.getElementById('richLibraryCta').textContent = LANG === 'en' ? 'Back to Algorithm Library' : '返回算法库';
+
+    if (detail) {
+      const localized = (item, key) => item[`${key}${LANG === 'en' ? 'En' : 'Zh'}`];
+      document.getElementById('algorithmStatus').textContent = localized(detail, 'status');
+      document.getElementById('genericPanel').hidden = true;
+      document.getElementById('richDetail').hidden = false;
+      document.getElementById('overviewKicker').textContent = LANG === 'en' ? 'Capability Overview' : '能力概览';
+      document.getElementById('overviewTitle').textContent = localized(detail, 'overviewTitle');
+      document.getElementById('overviewText').textContent = localized(detail, 'overview');
+      document.getElementById('capabilityTitle').textContent = localized(detail, 'capabilitiesTitle');
+      const regulationVideos = detail.regulationKey ? Array.from((window.ComplianceVideoLibrary || {})[detail.regulationKey] || []) : [];
+      const mediaPanel = document.getElementById('mediaPanel');
+      const videos = detail.videos || [];
+      const plannedVideos = detail.plannedVideos || [];
+      if (videos.length || plannedVideos.length) {
+        mediaPanel.hidden = false;
+        document.getElementById('mediaTitle').textContent = localized(detail, 'mediaTitle');
+        document.getElementById('mediaSummary').textContent = localized(detail, 'mediaSummary');
+      } else {
+        mediaPanel.hidden = true;
+      }
+      const renderedVideos = videos.map(video => {
+        const videoTitle = LANG === 'en' ? video.en : video.zh;
+        return `<figure class="algorithm-video-card"><video controls autoplay muted loop playsinline preload="auto" aria-label="${videoTitle}"><source src="${video.src}" type="video/mp4"></video><figcaption>${videoTitle}</figcaption></figure>`;
+      });
+      const renderedPlaceholders = plannedVideos.map(video => {
+        const videoTitle = LANG === 'en' ? video.en : video.zh;
+        const pendingLabel = LANG === 'en' ? 'VIDEO PENDING' : '待添加视频';
+        const helper = LANG === 'en' ? 'Video to be added' : '视频待补充';
+        return `<article class="algorithm-video-placeholder"><div class="placeholder-visual"><span>${pendingLabel}</span></div><div class="placeholder-copy"><strong>${videoTitle}</strong><small>${helper}</small></div></article>`;
+      });
+      document.getElementById('algorithmVideoGrid').classList.toggle('four-up', videos.length + plannedVideos.length === 4);
+      document.getElementById('algorithmVideoGrid').innerHTML = renderedVideos.concat(renderedPlaceholders).join('');
+      document.getElementById('algorithmMetricGrid').innerHTML = detail.metrics.map(metric => {
+        const content = `<strong>${localized(metric, 'value')}</strong><span>${localized(metric, 'label')}</span>`;
+        if (metric.opensRegulation && regulationVideos.length) {
+          const ariaLabel = LANG === 'en' ? 'Open combined BSW regulation test videos' : '打开合并的 BSW 法规测试视频';
+          return `<button class="metric-card metric-card-action" type="button" data-algorithm-regulation-open aria-label="${ariaLabel}">${content}<span class="metric-card-action-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M10 9l5 3-5 3V9z"/></svg></span></button>`;
+        }
+        return `<article class="metric-card">${content}</article>`;
+      }).join('');
+      const regulationTrigger = document.querySelector('[data-algorithm-regulation-open]');
+      if (regulationTrigger) initAlgorithmRegulationGallery(regulationVideos, localized(detail, 'regulationTitle'), regulationTrigger);
+      document.getElementById('capabilityGrid').classList.toggle('dense', detail.capabilities.length > 6);
+      document.getElementById('capabilityGrid').innerHTML = detail.capabilities.map((capability, index) => `<article class="capability-card"><span class="capability-number">${String(index + 1).padStart(2, '0')}</span><h3>${localized(capability, 'title')}</h3><p>${localized(capability, 'body')}</p></article>`).join('');
+    } else {
+      document.getElementById('algorithmStatus').textContent = LANG === 'en' ? 'Dedicated function page · Content framework ready' : '专属功能页面 · 内容框架已就绪';
+      document.getElementById('structureTitle').textContent = LANG === 'en' ? 'Planned Page Structure' : '页面内容框架';
+      document.getElementById('structureSummary').textContent = LANG === 'en' ? 'The structure is ready for future functional explanations, technical material, and demonstration media.' : '该页面已为后续功能说明、技术资料与演示内容预留结构。';
+      document.getElementById('roadmapGrid').innerHTML = roadmap.map(item => `<article class="roadmap-card"><strong>${item}</strong><span>${LANG === 'en' ? 'Content planned' : '内容待补充'}</span></article>`).join('');
+    }
+
+    function initAlgorithmRegulationGallery(videos, galleryTitle, launch) {
+      const modal = document.getElementById('algorithmRegulationModal');
+      const dialog = modal.querySelector('.algorithm-regulation-dialog');
+      const player = document.getElementById('algorithmRegulationPlayer');
+      const list = document.getElementById('algorithmRegulationList');
+      const currentTitle = document.getElementById('algorithmRegulationCurrentTitle');
+      const currentIndex = document.getElementById('algorithmRegulationCurrentIndex');
+      const closeButton = modal.querySelector('.algorithm-regulation-close');
+      let previousFocus = null;
+      const videoName = video => LANG === 'en' ? video.en : video.zh;
+
+      document.getElementById('algorithmRegulationKicker').textContent = LANG === 'en' ? 'Regulation Test Videos' : '法规测试视频';
+      document.getElementById('algorithmRegulationDialogTitle').textContent = galleryTitle;
+      document.getElementById('algorithmRegulationPlaylistLabel').textContent = LANG === 'en' ? 'Video playlist' : '视频列表';
+      document.getElementById('algorithmRegulationPlaylistCount').textContent = LANG === 'en' ? `${videos.length} videos` : `${videos.length} 个视频`;
+      closeButton.setAttribute('aria-label', LANG === 'en' ? 'Close BSW regulation videos' : '关闭 BSW 法规测试视频');
+
+      function selectVideo(index, shouldPlay) {
+        const video = videos[index];
+        if (!video) return;
+        player.pause();
+        player.src = video.src;
+        player.load();
+        currentTitle.textContent = videoName(video);
+        currentIndex.textContent = `${String(index + 1).padStart(2, '0')} / ${String(videos.length).padStart(2, '0')}`;
+        list.querySelectorAll('.algorithm-regulation-option').forEach((button, buttonIndex) => {
+          const active = buttonIndex === index;
+          button.classList.toggle('active', active);
+          button.setAttribute('aria-current', active ? 'true' : 'false');
+        });
+        if (shouldPlay) player.play().catch(() => {});
+      }
+
+      videos.forEach((video, index) => {
+        const button = document.createElement('button');
+        button.type = 'button';
+        button.className = 'algorithm-regulation-option';
+        button.setAttribute('aria-label', `${LANG === 'en' ? 'Play' : '播放'} ${videoName(video)}`);
+        button.innerHTML = `<span class="algorithm-regulation-index">${String(index + 1).padStart(2, '0')}</span><strong>${videoName(video)}</strong>`;
+        button.addEventListener('click', () => selectVideo(index, true));
+        list.appendChild(button);
+      });
+
+      function openGallery() {
+        previousFocus = document.activeElement;
+        modal.hidden = false;
+        document.body.classList.add('algorithm-regulation-open');
+        selectVideo(0, false);
+        dialog.focus();
+      }
+
+      function closeGallery() {
+        player.pause();
+        player.removeAttribute('src');
+        player.load();
+        modal.hidden = true;
+        document.body.classList.remove('algorithm-regulation-open');
+        if (previousFocus && typeof previousFocus.focus === 'function') previousFocus.focus();
+      }
+
+      launch.addEventListener('click', openGallery);
+      modal.querySelectorAll('[data-algorithm-regulation-close]').forEach(control => control.addEventListener('click', closeGallery));
+      document.addEventListener('keydown', event => {
+        if (event.key === 'Escape' && !modal.hidden) closeGallery();
+      });
+    }
+  </script>
+</body>
+</html>
