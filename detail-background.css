@@ -1,0 +1,80 @@
+/* Main-page background reused by capability and algorithm detail pages. */
+body {
+  position: relative;
+  isolation: isolate;
+  background:
+    radial-gradient(circle at 50% 42%, rgba(178, 224, 0, 0.09), transparent 28rem),
+    radial-gradient(circle at 18% 22%, rgba(178, 224, 0, 0.045), transparent 26rem),
+    radial-gradient(circle at 82% 34%, rgba(255, 255, 255, 0.035), transparent 22rem),
+    linear-gradient(180deg, #010302 0%, #020403 48%, #000 100%);
+  background-size: auto;
+  background-attachment: fixed;
+}
+
+body::before,
+body::after {
+  content: '';
+  position: fixed;
+  pointer-events: none;
+  z-index: 0;
+  opacity: 1;
+}
+
+body::before {
+  inset: 0;
+  background:
+    radial-gradient(circle, rgba(185, 235, 0, 0.9) 0 1.2px, transparent 1.8px) 7% 8% / 170px 130px,
+    radial-gradient(circle, rgba(255, 255, 230, 0.9) 0 1px, transparent 1.7px) 11% 19% / 260px 210px,
+    radial-gradient(circle, rgba(166, 218, 0, 0.72) 0 1.6px, transparent 2.6px) 43% 17% / 310px 240px,
+    radial-gradient(circle, rgba(186, 236, 0, 0.68) 0 1.1px, transparent 1.9px) 67% 11% / 220px 180px,
+    radial-gradient(circle, rgba(255, 255, 255, 0.68) 0 0.9px, transparent 1.6px) 84% 24% / 300px 230px,
+    radial-gradient(circle, rgba(168, 225, 0, 0.74) 0 1.4px, transparent 2.3px) 24% 78% / 240px 190px,
+    radial-gradient(circle, rgba(185, 235, 0, 0.7) 0 1px, transparent 1.8px) 79% 78% / 190px 150px;
+  animation: detailParticleTwinkle 4.8s ease-in-out infinite alternate;
+}
+
+body::after {
+  inset: 11vh 19vw;
+  transform-origin: 50% 50%;
+  background:
+    radial-gradient(circle, rgba(185, 235, 0, 0.96) 0 2px, transparent 3.3px) 0 0 / 36px 36px,
+    radial-gradient(circle, rgba(220, 255, 82, 0.72) 0 1.4px, transparent 2.4px) 18px 12px / 46px 46px,
+    radial-gradient(circle, rgba(255, 255, 235, 0.88) 0 1px, transparent 1.9px) 9px 24px / 72px 72px;
+  filter: drop-shadow(0 0 10px rgba(185, 235, 0, 0.68)) drop-shadow(0 0 22px rgba(185, 235, 0, 0.22));
+  opacity: 0.84;
+  /* A precise, symmetrical X keeps the particle field crisp and intentional. */
+  clip-path: polygon(
+    0 9%, 9% 0,
+    50% 41%,
+    91% 0, 100% 9%,
+    59% 50%,
+    100% 91%, 91% 100%,
+    50% 59%,
+    9% 100%, 0 91%,
+    41% 50%
+  );
+  animation: detailParticlePulse 2.8s ease-in-out infinite alternate;
+}
+
+body > .shell {
+  position: relative;
+  z-index: 1;
+}
+
+@keyframes detailParticleTwinkle {
+  from { opacity: 0.82; filter: brightness(0.95); }
+  to { opacity: 0.98; filter: brightness(1.12); }
+}
+
+@keyframes detailParticlePulse {
+  from { opacity: 0.46; transform: scale(0.97); filter: drop-shadow(0 0 5px rgba(185, 235, 0, 0.42)) drop-shadow(0 0 14px rgba(185, 235, 0, 0.14)); }
+  to { opacity: 0.94; transform: scale(1.035); filter: drop-shadow(0 0 16px rgba(185, 235, 0, 0.9)) drop-shadow(0 0 40px rgba(185, 235, 0, 0.38)); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  body::before,
+  body::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+  }
+}
